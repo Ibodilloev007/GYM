@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>PremiumSport - Премиальное спортивное питание</title>
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+ <style>
+  :root {
+   --black: #121212;
+   --dark-gray: #1E1E1E;
+   --gray: #2D2D2D;
+   --light-gray: #3D3D3D;
+   --white: #F5F5F5;
+   --green: #4CAF50;
+   --blue: #2196F3;
+   --orange: #FF9800;
+   --purple: #9C27B0;
+   --gradient-green: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+   --gradient-blue: linear-gradient(135deg, #2196F3 0%, #0D47A1 100%);
+   --gradient-orange: linear-gradient(135deg, #FF9800 0%, #E65100 100%);
+   --gradient-purple: linear-gradient(135deg, #9C27B0 0%, #6A1B9A 100%);
+   --shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+   --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  * {
+   box-sizing: border-box;
+   margin: 0;
+   padding: 0;
+   font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, sans-serif;
+  }
+
+  body {
+   background: var(--black);
+   color: var(--white);
+   min-height: 100vh;
+   line-height: 1.6;
+  }
+
+  .container {
+   width: 100%;
+   max-width: 1400px;
+   margin: 0 auto;
+   padding: 2rem 1rem;
+  }
+
+  header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-bottom: 2.5rem;
+   padding: 0 1rem;
+  }
+
+  .logo {
+   font-size: 2rem;
+   font-weight: 700;
+   background: linear-gradient(90deg, var(--green), var(--blue));
+   -webkit-background-clip: text;
+   background-clip: text;
+   color: transparent;
+   text-decoration: none;
+  }
+
+  .search-box {
+   position: relative;
+   width: 250px;
+  }
+
+  .search-box input {
+   width: 100%;
+   padding: 0.7rem 1rem 0.7rem 2.5rem;
+   border-radius: 30px;
+   border: none;
+   background: var(--dark-gray);
+   color: var(--white);
+   font-size: 0.95rem;
+   transition: var(--transition);
+  }
+
+  .search-box input:focus {
+   outline: none;
+   box-shadow: 0 0 0 2px var(--green);
+  }
+
+  .search-box i {
+   position: absolute;
+   left: 1rem;
+   top: 50%;
+   transform: translateY(-50%);
+   color: var(--light-gray);
+  }
+
+  h1 {
+   text-align: center;
+   margin-bottom: 2rem;
+   font-size: 2.5rem;
+   background: linear-gradient(90deg, var(--green), var(--blue));
+   -webkit-background-clip: text;
+   background-clip: text;
+   color: transparent;
+   padding: 0 1rem;
+  }
+
+  .filter-container {
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: center;
+   gap: 0.8rem;
+   margin-bottom: 2.5rem;
+   padding: 0 1rem;
+  }
+
+  .filter-btn {
+   border: none;
+   padding: 0.8rem 1.5rem;
+   border-radius: 30px;
+   font-weight: 600;
+   cursor: pointer;
+   transition: var(--transition);
+   font-size: 0.95rem;
+   display: flex;
+   align-items: center;
+   gap: 0.5rem;
+  }
+
+  .filter-btn i {
+   font-size: 1rem;
+  }
+
+  .filter-btn.active {
+   color: white;
+   transform: translateY(-3px);
+   box-shadow: var(--shadow);
+  }
+
+  .filter-btn.all {
+   background: var(--gradient-green);
+  }
+
+  .filter-btn.protein {
+   background: var(--gradient-blue);
+  }
+
+  .filter-btn.gainer {
+   background: var(--gradient-orange);
+  }
+
+  .filter-btn.creatine {
+   background: var(--gradient-purple);
+  }
+
+  .filter-btn.bcaa {
+   background: linear-gradient(135deg, #F44336 0%, #C62828 100%);
+  }
+
+  .products-grid {
+   display: grid;
+   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+   gap: 1.5rem;
+   padding: 0 1rem;
+  }
+
+  .product-card {
+   background: var(--dark-gray);
+   border-radius: 16px;
+   overflow: hidden;
+   transition: var(--transition);
+   position: relative;
+   display: flex;
+   flex-direction: column;
+   border: 1px solid var(--gray);
+  }
+
+  .product-card:hover {
+   transform: translateY(-10px);
+   box-shadow: var(--shadow);
+   border-color: var(--green);
+  }
+
+  .product-badge {
+   position: absolute;
+   top: 1rem;
+   left: 1rem;
+   background: var(--green);
+   color: white;
+   padding: 0.3rem 0.8rem;
+   border-radius: 20px;
+   font-size: 0.8rem;
+   font-weight: 600;
+   z-index: 2;
+  }
+
+  .product-image-container {
+   height: 250px;
+   position: relative;
+   overflow: hidden;
+  }
+
+  .product-image {
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+   transition: transform 0.5s ease;
+  }
+
+  .product-card:hover .product-image {
+   transform: scale(1.05);
+  }
+
+  .product-content {
+   padding: 1.5rem;
+   flex-grow: 1;
+   display: flex;
+   flex-direction: column;
+  }
+
+  .product-title {
+   font-size: 1.2rem;
+   font-weight: 600;
+   margin-bottom: 0.8rem;
+   color: var(--white);
+  }
+
+  .product-description {
+   font-size: 0.9rem;
+   color: #BDBDBD;
+   margin-bottom: 1.2rem;
+   flex-grow: 1;
+  }
+
+  .product-benefits {
+   margin-bottom: 1.5rem;
+  }
+
+  .benefit-item {
+   display: flex;
+   align-items: center;
+   gap: 0.5rem;
+   margin-bottom: 0.5rem;
+   font-size: 0.85rem;
+   color: #BDBDBD;
+  }
+
+  .benefit-item i {
+   color: var(--green);
+   font-size: 0.7rem;
+  }
+
+  .product-footer {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-top: auto;
+  }
+
+  .product-price {
+   font-size: 1.4rem;
+   font-weight: 700;
+   color: var(--green);
+  }
+
+  /* Адаптация для мобильных устройств */
+  @media (max-width: 768px) {
+   header {
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+   }
+
+   .search-box {
+    width: 100%;
+   }
+
+   h1 {
+    font-size: 2rem;
+   }
+
+   .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+   }
+
+   .product-image-container {
+    height: 200px;
+   }
+  }
+
+  @media (max-width: 480px) {
+   .filter-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+   }
+
+   .products-grid {
+    grid-template-columns: 1fr;
+   }
+
+   .product-card {
+    max-width: 100%;
+   }
+  }
+
+  /* Добавляем стили для нижней панели */
+  .footer-nav {
+   position: fixed;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   background: var(--dark-gray);
+   padding: 1rem;
+   border-top: 1px solid var(--gray);
+   z-index: 999;
+  }
+
+  .nav-icons {
+   display: flex;
+   justify-content: space-around;
+   align-items: center;
+   max-width: 600px;
+   margin: 0 auto;
+  }
+
+  .nav-item {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 0.5rem;
+   cursor: pointer;
+   transition: all 0.3s;
+   padding: 0.5rem;
+   border-radius: 8px;
+  }
+
+  .nav-item:hover {
+   background: rgba(76, 175, 80, 0.1);
+   transform: translateY(-3px);
+  }
+
+  .nav-icon {
+   width: 28px;
+   height: 28px;
+   fill: var(--white);
+   transition: fill 0.3s;
+  }
+
+  .nav-item:hover .nav-icon {
+   fill: var(--green);
+  }
+
+  .nav-label {
+   font-size: 0.8rem;
+   color: var(--light-gray);
+   display: none;
+  }
+
+  /* Адаптация для мобильных */
+  @media (max-width: 768px) {
+   .footer-nav {
+    padding: 0.5rem;
+   }
+
+   .nav-icons {
+    gap: 0.5rem;
+   }
+
+   .nav-item {
+    padding: 0.3rem;
+   }
+
+   .nav-icon {
+    width: 24px;
+    height: 24px;
+   }
+
+   .nav-label {
+    font-size: 0.7rem;
+   }
+  }
+
+  /* Добавляем отступ для основного контента */
+  body {
+   padding-bottom: 80px !important;
+  }
+
+  @media (min-width: 768px) {
+   .nav-label {
+    display: block;
+   }
+  }
+
+  .a-blank {
+   text-decoration: none;
+   color: #fff;
+  }
+ </style>
+</head>
+
+<body>
+ <div class="container">
+  <header>
+   <a href="#" class="logo">PremiumSport</a>
+   <div class="search-box">
+    <i class="fas fa-search"></i>
+    <input type="text" placeholder="Поиск продуктов...">
+   </div>
+  </header>
+
+  <h1>Премиальное спортивное питание</h1>
+
+  <div class="filter-container">
+   <button class="filter-btn all active" onclick="filterProducts('all')">
+    <i class="fas fa-list"></i> Все
+   </button>
+   <button class="filter-btn protein" onclick="filterProducts('protein')">
+    <i class="fas fa-dumbbell"></i> Протеин
+   </button>
+   <button class="filter-btn gainer" onclick="filterProducts('gainer')">
+    <i class="fas fa-weight"></i> Гейнер
+   </button>
+   <button class="filter-btn creatine" onclick="filterProducts('creatine')">
+    <i class="fas fa-bolt"></i> Креатин
+   </button>
+   <button class="filter-btn bcaa" onclick="filterProducts('bcaa')">
+    <i class="fas fa-atom"></i> BCAA
+   </button>
+  </div>
+
+  <div class="products-grid">
+   <!-- Креатин Optimum Nutrition -->
+   <div class="product-card" data-category="creatine">
+    <span class="product-badge">Хит продаж</span>
+    <div class="product-image-container">
+     <img src="https://catalog.detmir.st/media/SsFlECv8llwtO9h2qYkUmt3dP0HmiA7ibaaHvc6J_xk="
+      alt="Optimum Nutrition Creatine" class="product-image">
+    </div>
+    <div class="product-content">
+     <h3 class="product-title">Optimum Nutrition Creatine</h3>
+     <p class="product-description">Микронизированный креатин моногидрат премиального качества для максимальной
+      эффективности</p>
+
+     <div class="product-benefits">
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>100% чистый креатин</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Увеличивает силу на 15%</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Быстрое восстановление</span>
+      </div>
+     </div>
+
+     <div class="product-footer">
+      <div class="product-price">6 699 ₽</div>
+     </div>
+    </div>
+   </div>
+
+   <!-- Universal Nutrition Creatine -->
+   <div class="product-card" data-category="creatine">
+    <span class="product-badge">Выбор экспертов</span>
+    <div class="product-image-container">
+     <img src="https://avatars.mds.yandex.net/i?id=22ea06728ef8526d9658b52285bd0218_l-5234049-images-thumbs&n=13"
+      alt="Universal Nutrition Creatine" class="product-image">
+    </div>
+    <div class="product-content">
+     <h3 class="product-title">Universal Nutrition Creatine</h3>
+     <p class="product-description">Проверенный временем креатин от легендарного бренда для профессиональных атлетов</p>
+
+     <div class="product-benefits">
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Без добавок и наполнителей</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Эффект через 5-7 дней</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Подходит для любого спорта</span>
+      </div>
+     </div>
+
+     <div class="product-footer">
+      <div class="product-price">3 199 ₽</div>
+     </div>
+    </div>
+   </div>
+
+   <!-- Gold Creatine -->
+   <div class="product-card" data-category="creatine">
+    <span class="product-badge">Выбор экспертов</span>
+    <div class="product-image-container">
+     <img src="https://images.uzum.uz/co27c46pom4ma10r7fhg/original.jpg" alt="Gold Creatine" class="product-image">
+    </div>
+    <div class="product-content">
+     <h3 class="product-title">Gold Creatine</h3>
+     <p class="product-description">Проверенный временем креатин от легендарного бренда для профессиональных атлетов</p>
+
+     <div class="product-benefits">
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Чистый (99,9%)</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Быстро усваивается</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Без задержки воды</span>
+      </div>
+     </div>
+
+     <div class="product-footer">
+      <div class="product-price">2 099 ₽</div>
+     </div>
+    </div>
+   </div>
+
+   <!-- Golden Creatine -->
+   <div class="product-card" data-category="creatine">
+    <span class="product-badge">Выбор экспертов</span>
+    <div class="product-image-container">
+     <img src="https://i.yavitrina.ru/100-golden-creatine-150-g-unflavored-bez-vkusovyh-dobavok-376673053"
+      alt="Gold Creatine" class="product-image">
+    </div>
+    <div class="product-content">
+     <h3 class="product-title">Golden Creatine</h3>
+     <p class="product-description">Проверенный временем креатин от легендарного бренда для профессиональных атлетов</p>
+
+     <div class="product-benefits">
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Чище – 99,9% без примесей</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Сильнее – усиленная формула</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Быстрее – результат за 5 дней</span>
+      </div>
+     </div>
+
+     <div class="product-footer">
+      <div class="product-price">2 099 ₽</div>
+     </div>
+    </div>
+   </div>
+
+   <!-- Golden Creatine -->
+   <div class="product-card" data-category="creatine">
+    <span class="product-badge">Выбор экспертов</span>
+    <div class="product-image-container">
+     <img src="https://avatars.mds.yandex.net/i?id=89ca38a7e902b439038125673adf75bf_l-5236343-images-thumbs&n=13"
+      alt="Gold Creatine" class="product-image">
+    </div>
+    <div class="product-content">
+     <h3 class="product-title">Creatine Monohydrate</h3>
+     <p class="product-description">Креатин PrimeKraft – проверенный порошок для силы и выносливости.</p>
+
+     <div class="product-benefits">
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Чистый – 99,7% моногидрат</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Проверенный – золотой стандарт</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Выгодный – цена/качество</span>
+      </div>
+     </div>
+
+     <div class="product-footer">
+      <div class="product-price">2 099 ₽</div>
+     </div>
+    </div>
+   </div>
+
+   <!-- Сывороточный протеин -->
+   <div class="product-card" data-category="protein">
+    <div class="product-image-container">
+     <img src="https://sportion.uz/images/product_images/1670318715-5c28395a21556f87e1b40fb7fac89aa3_5.jpg"
+      alt="Whey Protein" class="product-image">
+    </div>
+    <div class="product-content">
+     <h3 class="product-title">Gold Standard Whey</h3>
+     <p class="product-description">Сывороточный протеин премиум-класса с содержанием белка 24 г на порцию</p>
+
+     <div class="product-benefits">
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Быстрое усвоение</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>5.5 г BCAA на порцию</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>11 вкусов на выбор</span>
+      </div>
+     </div>
+
+     <div class="product-footer">
+      <div class="product-price">4 299 ₽</div>
+     </div>
+    </div>
+   </div>
+
+   <!-- Гейнер Serious Mass -->
+   <div class="product-card" data-category="gainer">
+    <span class="product-badge">Для набора массы</span>
+    <div class="product-image-container">
+     <img
+      src="https://pcdn.goldapple.ru/p/p/19000033867/web/696d674d61696e5f34616666373963633862306534666362383931666233313637363364396138658dd3a16fc00ba68.jpg"
+      alt="Serious Mass" class="product-image">
+    </div>
+    <div class="product-content">
+     <h3 class="product-title">Serious Mass</h3>
+     <p class="product-description">Высококалорийный гейнер с комплексом белков, углеводов и витаминов</p>
+
+     <div class="product-benefits">
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>1250 ккал на порцию</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>50 г белка на порцию</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Витаминный комплекс</span>
+      </div>
+     </div>
+
+     <div class="product-footer">
+      <div class="product-price">3 999 ₽</div>
+     </div>
+    </div>
+   </div>
+
+   <!-- BCAA -->
+   <div class="product-card" data-category="bcaa">
+    <div class="product-image-container">
+     <img src="https://pcdn.goldapple.ru/p/p/19000318481/imgmain_9d23eb28a3e147c8b70f982f17d1f9cf.jpg"
+      alt="BCAA Complex" class="product-image">
+    </div>
+    <div class="product-content">
+     <h3 class="product-title">BCAA 2:1:1</h3>
+     <p class="product-description">Оптимальное соотношение аминокислот для восстановления и защиты мышц</p>
+
+     <div class="product-benefits">
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Соотношение 2:1:1</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Уменьшает катаболизм</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Быстрое восстановление</span>
+      </div>
+     </div>
+
+     <div class="product-footer">
+      <div class="product-price">899 ₽</div>
+     </div>
+    </div>
+   </div>
+
+   <!-- Казеиновый протеин -->
+   <div class="product-card" data-category="protein">
+    <span class="product-badge">Ночное восстановление</span>
+    <div class="product-image-container">
+     <img src="https://catalog.detmir.st/media/EDYC30Du4-OU3GMgM22xHF8D522tjyLQKCaeyA6Gr2Q=" alt="Casein Protein"
+      class="product-image">
+    </div>
+    <div class="product-content">
+     <h3 class="product-title">Micellar Casein</h3>
+     <p class="product-description">Медленный белок для длительного снабжения мышц аминокислотами</p>
+
+     <div class="product-benefits">
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Медленное усвоение 6-8 часов</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Антикатаболический эффект</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Идеален перед сном</span>
+      </div>
+     </div>
+
+     <div class="product-footer">
+      <div class="product-price">4 599 ₽</div>
+     </div>
+    </div>
+   </div>
+  </div>
+ </div>
+
+ <!-- Добавляем перед закрывающим тегом body -->
+ <div class="footer-nav">
+  <div class="nav-icons">
+   <!-- Иконка еды -->
+   <a href="index4.html" class="a-blank">
+    <div class="nav-item">
+     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-fork-knife"
+      viewBox="0 0 16 16">
+      <path
+       d="M13 .5c0-.276-.226-.506-.498-.465-1.703.257-2.94 2.012-3 8.462a.5.5 0 0 0 .498.5c.56.01 1 .13 1 1.003v5.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5zM4.25 0a.25.25 0 0 1 .25.25v5.122a.128.128 0 0 0 .256.006l.233-5.14A.25.25 0 0 1 5.24 0h.522a.25.25 0 0 1 .25.238l.233 5.14a.128.128 0 0 0 .256-.006V.25A.25.25 0 0 1 6.75 0h.29a.5.5 0 0 1 .498.458l.423 5.07a1.69 1.69 0 0 1-1.059 1.711l-.053.022a.92.92 0 0 0-.58.884L6.47 15a.971.971 0 1 1-1.942 0l.202-6.855a.92.92 0 0 0-.58-.884l-.053-.022a1.69 1.69 0 0 1-1.059-1.712L3.462.458A.5.5 0 0 1 3.96 0z" />
+     </svg>
+     <span class="nav-label">Питание</span>
+    </div>
+   </a>
+
+   <!-- Иконка вопросов -->
+   <a href="index.html" class="a-blank">
+    <div class="nav-item">
+     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-week"
+      viewBox="0 0 16 16">
+      <path
+       d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z" />
+      <path
+       d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
+     </svg>
+     <span class="nav-label">Планы</span>
+    </div>
+   </a>
+
+   <!-- Иконка таблеток -->
+   <a href="index3.html" class="a-blank">
+    <div class="nav-item">
+     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-capsule"
+      viewBox="0 0 16 16">
+      <path
+       d="M1.828 8.9 8.9 1.827a4 4 0 1 1 5.657 5.657l-7.07 7.071A4 4 0 1 1 1.827 8.9Zm9.128.771 2.893-2.893a3 3 0 1 0-4.243-4.242L6.713 5.429z" />
+     </svg>
+     <span class="nav-label">Добавки</span>
+    </div>
+   </a>
+  </div>
+ </div>
+
+ <script>
+  function filterProducts(category) {
+   const products = document.querySelectorAll('.product-card');
+   const filterBtns = document.querySelectorAll('.filter-btn');
+
+   // Обновляем активную кнопку фильтра
+   filterBtns.forEach(btn => {
+    btn.classList.remove('active');
+    if ((category === 'all' && btn.classList.contains('all')) ||
+     btn.classList.contains(category)) {
+     btn.classList.add('active');
+    }
+   });
+
+   // Фильтруем продукты
+   products.forEach(product => {
+    if (category === 'all' || product.dataset.category === category) {
+     product.style.display = 'flex';
+    } else {
+     product.style.display = 'none';
+    }
+   });
+  }
+
+  // Поиск продуктов
+  const searchInput = document.querySelector('.search-box input');
+  searchInput.addEventListener('input', function () {
+   const searchTerm = this.value.toLowerCase();
+   const products = document.querySelectorAll('.product-card');
+
+   products.forEach(product => {
+    const title = product.querySelector('.product-title').textContent.toLowerCase();
+    const description = product.querySelector('.product-description').textContent.toLowerCase();
+
+    if (title.includes(searchTerm) || description.includes(searchTerm)) {
+     product.style.display = 'flex';
+    } else {
+     product.style.display = 'none';
+    }
+   });
+  });
+ </script>
+</body>
+
+</html>

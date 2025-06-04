@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>HealthyLife - Правильное питание</title>
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+ <style>
+  :root {
+   --black: #121212;
+   --dark-gray: #1E1E1E;
+   --gray: #2D2D2D;
+   --light-gray: #3D3D3D;
+   --white: #F5F5F5;
+   --green: #4CAF50;
+   --blue: #2196F3;
+   --orange: #FF9800;
+   --purple: #9C27B0;
+   --gradient-green: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+   --gradient-blue: linear-gradient(135deg, #2196F3 0%, #0D47A1 100%);
+   --gradient-orange: linear-gradient(135deg, #FF9800 0%, #E65100 100%);
+   --gradient-purple: linear-gradient(135deg, #9C27B0 0%, #6A1B9A 100%);
+   --shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+   --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  * {
+   box-sizing: border-box;
+   margin: 0;
+   padding: 0;
+   font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, sans-serif;
+  }
+
+  body {
+   background: var(--black);
+   color: var(--white);
+   min-height: 100vh;
+   line-height: 1.6;
+  }
+
+  .container {
+   width: 100%;
+   max-width: 1400px;
+   margin: 0 auto;
+   padding: 2rem 1rem;
+  }
+
+  header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-bottom: 2.5rem;
+   padding: 0 1rem;
+  }
+
+  .logo {
+   font-size: 2rem;
+   font-weight: 700;
+   background: linear-gradient(90deg, var(--green), var(--blue));
+   -webkit-background-clip: text;
+   background-clip: text;
+   color: transparent;
+   text-decoration: none;
+  }
+
+  .search-box {
+   position: relative;
+   width: 250px;
+  }
+
+  .search-box input {
+   width: 100%;
+   padding: 0.7rem 1rem 0.7rem 2.5rem;
+   border-radius: 30px;
+   border: none;
+   background: var(--dark-gray);
+   color: var(--white);
+   font-size: 0.95rem;
+   transition: var(--transition);
+  }
+
+  .search-box input:focus {
+   outline: none;
+   box-shadow: 0 0 0 2px var(--green);
+  }
+
+  .search-box i {
+   position: absolute;
+   left: 1rem;
+   top: 50%;
+   transform: translateY(-50%);
+   color: var(--light-gray);
+  }
+
+  h1 {
+   text-align: center;
+   margin-bottom: 2rem;
+   font-size: 2.5rem;
+   background: linear-gradient(90deg, var(--green), var(--blue));
+   -webkit-background-clip: text;
+   background-clip: text;
+   color: transparent;
+   padding: 0 1rem;
+  }
+
+  .filter-container {
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: center;
+   gap: 0.8rem;
+   margin-bottom: 2.5rem;
+   padding: 0 1rem;
+  }
+
+  .filter-btn {
+   border: none;
+   padding: 0.8rem 1.5rem;
+   border-radius: 30px;
+   font-weight: 600;
+   cursor: pointer;
+   transition: var(--transition);
+   font-size: 0.95rem;
+   display: flex;
+   align-items: center;
+   gap: 0.5rem;
+  }
+
+  .filter-btn i {
+   font-size: 1rem;
+  }
+
+  .filter-btn.active {
+   color: white;
+   transform: translateY(-3px);
+   box-shadow: var(--shadow);
+  }
+
+  .filter-btn.all {
+   background: var(--gradient-green);
+  }
+
+  .filter-btn.protein {
+   background: var(--gradient-blue);
+  }
+
+  .filter-btn.carbs {
+   background: var(--gradient-orange);
+  }
+
+  .filter-btn.fats {
+   background: var(--gradient-purple);
+  }
+
+  .filter-btn.vegan {
+   background: linear-gradient(135deg, #F44336 0%, #C62828 100%);
+  }
+
+  .products-grid {
+   display: grid;
+   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+   gap: 1.5rem;
+   padding: 0 1rem;
+  }
+
+  .product-card {
+   background: var(--dark-gray);
+   border-radius: 16px;
+   overflow: hidden;
+   transition: var(--transition);
+   position: relative;
+   display: flex;
+   flex-direction: column;
+   border: 1px solid var(--gray);
+  }
+
+  .product-card:hover {
+   transform: translateY(-10px);
+   box-shadow: var(--shadow);
+   border-color: var(--green);
+  }
+
+  .product-badge {
+   position: absolute;
+   top: 1rem;
+   left: 1rem;
+   background: var(--green);
+   color: white;
+   padding: 0.3rem 0.8rem;
+   border-radius: 20px;
+   font-size: 0.8rem;
+   font-weight: 600;
+   z-index: 2;
+  }
+
+  .product-image-container {
+   height: 250px;
+   position: relative;
+   overflow: hidden;
+  }
+
+  .product-image {
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+   transition: transform 0.5s ease;
+  }
+
+  .product-card:hover .product-image {
+   transform: scale(1.05);
+  }
+
+  .product-content {
+   padding: 1.5rem;
+   flex-grow: 1;
+   display: flex;
+   flex-direction: column;
+  }
+
+  .product-title {
+   font-size: 1.2rem;
+   font-weight: 600;
+   margin-bottom: 0.8rem;
+   color: var(--white);
+  }
+
+  .product-description {
+   font-size: 0.9rem;
+   color: #BDBDBD;
+   margin-bottom: 1.2rem;
+   flex-grow: 1;
+  }
+
+  .product-benefits {
+   margin-bottom: 1.5rem;
+  }
+
+  .benefit-item {
+   display: flex;
+   align-items: center;
+   gap: 0.5rem;
+   margin-bottom: 0.5rem;
+   font-size: 0.85rem;
+   color: #BDBDBD;
+  }
+
+  .benefit-item i {
+   color: var(--green);
+   font-size: 0.7rem;
+  }
+
+  .product-footer {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-top: auto;
+  }
+
+  .product-price {
+   font-size: 1.4rem;
+   font-weight: 700;
+   color: var(--green);
+  }
+
+  /* Адаптация для мобильных устройств */
+  @media (max-width: 768px) {
+   header {
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+   }
+
+   .search-box {
+    width: 100%;
+   }
+
+   h1 {
+    font-size: 2rem;
+   }
+
+   .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+   }
+
+   .product-image-container {
+    height: 200px;
+   }
+  }
+
+  @media (max-width: 480px) {
+   .filter-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+   }
+
+   .products-grid {
+    grid-template-columns: 1fr;
+   }
+
+   .product-card {
+    max-width: 100%;
+   }
+  }
+
+  /* Добавляем стили для нижней панели */
+  .footer-nav {
+   position: fixed;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   background: var(--dark-gray);
+   padding: 1rem;
+   border-top: 1px solid var(--gray);
+   z-index: 999;
+  }
+
+  .nav-icons {
+   display: flex;
+   justify-content: space-around;
+   align-items: center;
+   max-width: 600px;
+   margin: 0 auto;
+  }
+
+  .nav-item {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 0.5rem;
+   cursor: pointer;
+   transition: all 0.3s;
+   padding: 0.5rem;
+   border-radius: 8px;
+  }
+
+  .nav-item:hover {
+   background: rgba(76, 175, 80, 0.1);
+   transform: translateY(-3px);
+  }
+
+  .nav-icon {
+   width: 28px;
+   height: 28px;
+   fill: var(--white);
+   transition: fill 0.3s;
+  }
+
+  .nav-item:hover .nav-icon {
+   fill: var(--green);
+  }
+
+  .nav-label {
+   font-size: 0.8rem;
+   color: var(--light-gray);
+   display: none;
+  }
+
+  /* Адаптация для мобильных */
+  @media (max-width: 768px) {
+   .footer-nav {
+    padding: 0.5rem;
+   }
+
+   .nav-icons {
+    gap: 0.5rem;
+   }
+
+   .nav-item {
+    padding: 0.3rem;
+   }
+
+   .nav-icon {
+    width: 24px;
+    height: 24px;
+   }
+
+   .nav-label {
+    font-size: 0.7rem;
+   }
+  }
+
+  /* Добавляем отступ для основного контента */
+  body {
+   padding-bottom: 80px !important;
+  }
+
+  @media (min-width: 768px) {
+   .nav-label {
+    display: block;
+   }
+  }
+
+  .a-blank {
+   text-decoration: none;
+   color: #fff;
+  }
+ </style>
+</head>
+
+<body>
+ <div class="container">
+  <header>
+   <a href="#" class="logo">HealthyLife</a>
+   <div class="search-box">
+    <i class="fas fa-search"></i>
+    <input type="text" placeholder="Поиск продуктов...">
+   </div>
+  </header>
+
+  <h1>Правильное питание для здоровья</h1>
+
+  <div class="filter-container">
+   <button class="filter-btn all active" onclick="filterProducts('all')">
+    <i class="fas fa-list"></i> Все
+   </button>
+   <button class="filter-btn protein" onclick="filterProducts('protein')">
+    <i class="fas fa-egg"></i> Белки
+   </button>
+   <button class="filter-btn carbs" onclick="filterProducts('carbs')">
+    <i class="fas fa-bread-slice"></i> Углеводы
+   </button>
+   <button class="filter-btn fats" onclick="filterProducts('fats')">
+    <i class="fas fa-seedling"></i> Жиры
+   </button>
+   <button class="filter-btn vegan" onclick="filterProducts('vegan')">
+    <i class="fas fa-leaf"></i> Веган
+   </button>
+  </div>
+
+  <div class="products-grid">
+   <!-- Куриная грудка -->
+   <div class="product-card" data-category="protein">
+    <span class="product-badge">Диетический</span>
+    <div class="product-image-container">
+     <img src="https://i0.wp.com/best-facebook.ru/800/600/https/telegra.ph/file/5cd20f8e5a216cb636544.jpg?ssl=1"
+      alt="Куриная грудка" class="product-image">
+    </div>
+    <div class="product-content">
+     <h3 class="product-title">Куриная грудка</h3>
+     <p class="product-description">Отличный источник нежирного белка с минимальным содержанием жиров</p>
+
+     <div class="product-benefits">
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>31 г белка на 100 г</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Низкая калорийность</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Богата витамином B6</span>
+      </div>
+     </div>
+
+     <div class="product-footer">
+      <div class="product-price">250 ₽/кг</div>
+     </div>
+    </div>
+   </div>
+
+   <!-- Лосось -->
+   <div class="product-card" data-category="protein">
+    <span class="product-badge">Омега-3</span>
+    <div class="product-image-container">
+     <img
+      src="https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+      alt="Лосось" class="product-image">
+    </div>
+    <div class="product-content">
+     <h3 class="product-title">Лосось</h3>
+     <p class="product-description">Богатый источник белка и полезных жиров омега-3</p>
+
+     <div class="product-benefits">
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>20 г белка на 100 г</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Высокое содержание омега-3</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Витамин D и селен</span>
+      </div>
+     </div>
+
+     <div class="product-footer">
+      <div class="product-price">1200 ₽/кг</div>
+     </div>
+    </div>
+   </div>
+
+   <!-- Киноа -->
+   <div class="product-card" data-category="carbs">
+    <span class="product-badge">Суперфуд</span>
+    <div class="product-image-container">
+     <img src="https://s56442.cdn.ngenix.net/img/0/0/resize/rshb/agrolife/quinoa-6341427_960_720.jpg" alt="Киноа"
+      class="product-image">
+    </div>
+    <div class="product-content">
+     <h3 class="product-title">Киноа</h3>
+     <p class="product-description">Безглютеновый источник сложных углеводов и полноценного белка</p>
+
+     <div class="product-benefits">
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>14 г белка на 100 г</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Содержит все аминокислоты</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Богата железом и магнием</span>
+      </div>
+     </div>
+
+     <div class="product-footer">
+      <div class="product-price">350 ₽/кг</div>
+     </div>
+    </div>
+   </div>
+
+   <!-- Авокадо -->
+   <div class="product-card" data-category="fats">
+    <span class="product-badge">Полезные жиры</span>
+    <div class="product-image-container">
+     <img
+      src="https://assets.newatlas.com/dims4/default/b36a730/2147483647/strip/true/crop/2000x1333+0+34/resize/1200x800!/quality/90/?url=http%3A%2F%2Fnewatlas-brightspot.s3.amazonaws.com%2F75%2Fe7%2F0789ec8e4234a3426553ce2b16e4%2Fdepositphotos-88091974-l-2015.jpg"
+      alt="Авокадо" class="product-image">
+    </div>
+    <div class="product-content">
+     <h3 class="product-title">Авокадо</h3>
+     <p class="product-description">Источник мононенасыщенных жиров и множества витаминов</p>
+
+     <div class="product-benefits">
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>15 г полезных жиров</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Богато калием</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Высокое содержание клетчатки</span>
+      </div>
+     </div>
+
+     <div class="product-footer">
+      <div class="product-price">150 ₽/шт</div>
+     </div>
+    </div>
+   </div>
+
+   <!-- Гречка -->
+   <div class="product-card" data-category="carbs">
+    <span class="product-badge">Без глютена</span>
+    <div class="product-image-container">
+     <img
+      src="https://cdnn21.img.ria.ru/images/151514/89/1515148939_0:0:5447:3631_1920x1280_80_0_0_f69517d2f6a9477713515dfd127a8925.jpg"
+      alt="Гречка" class="product-image">
+    </div>
+    <div class="product-content">
+     <h3 class="product-title">Гречневая крупа</h3>
+     <p class="product-description">Полезный источник сложных углеводов с высоким содержанием белка</p>
+
+     <div class="product-benefits">
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>13 г белка на 100 г</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Богата железом</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Низкий гликемический индекс</span>
+      </div>
+     </div>
+
+     <div class="product-footer">
+      <div class="product-price">120 ₽/кг</div>
+     </div>
+    </div>
+   </div>
+
+   <!-- Творог -->
+   <div class="product-card" data-category="protein">
+    <div class="product-image-container">
+     <img
+      src="https://img.vkusvill.ru/pim/images/site_LargeWebP/4227dcb0-743d-433c-a02b-d4afd2aaaf58.webp?1708051237.7105"
+      alt="Творог" class="product-image">
+    </div>
+    <div class="product-content">
+     <h3 class="product-title">Обезжиренный творог</h3>
+     <p class="product-description">Отличный источник казеина - медленного белка</p>
+
+     <div class="product-benefits">
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>18 г белка на 100 г</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Богат кальцием</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Низкое содержание жира</span>
+      </div>
+     </div>
+
+     <div class="product-footer">
+      <div class="product-price">180 ₽/кг</div>
+     </div>
+    </div>
+   </div>
+
+   <!-- Орехи -->
+   <div class="product-card" data-category="fats">
+    <span class="product-badge">Энергия</span>
+    <div class="product-image-container">
+     <img src="https://static-basket-02.wb.ru/vol25/guide/ceb820b9-55d2-4b01-b571-b5446512eca1-small.jpg" alt="Орехи"
+      class="product-image">
+    </div>
+    <div class="product-content">
+     <h3 class="product-title">Грецкие орехи</h3>
+     <p class="product-description">Источник полезных жиров, антиоксидантов и микроэлементов</p>
+
+     <div class="product-benefits">
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>15 г белка на 100 г</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Богаты омега-3</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Антиоксиданты</span>
+      </div>
+     </div>
+
+     <div class="product-footer">
+      <div class="product-price">800 ₽/кг</div>
+     </div>
+    </div>
+   </div>
+
+   <!-- Чечевица -->
+   <div class="product-card" data-category="protein">
+    <div class="product-image-container">
+     <img src="https://avatars.mds.yandex.net/get-znatoki/1649112/2a0000017a3921bc10686015159befcc8dcf/w1200"
+      alt="Чечевица" class="product-image">
+    </div>
+    <div class="product-content">
+     <h3 class="product-title">Чечевица</h3>
+     <p class="product-description">Растительный источник белка с высоким содержанием клетчатки</p>
+
+     <div class="product-benefits">
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>25 г белка на 100 г</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Богата железом</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Низкий гликемический индекс</span>
+      </div>
+     </div>
+
+     <div class="product-footer">
+      <div class="product-price">200 ₽/кг</div>
+     </div>
+    </div>
+   </div>
+
+   <!-- Тофу -->
+   <div class="product-card" data-category="vegan">
+    <span class="product-badge">Веган</span>
+    <div class="product-image-container">
+     <img src="https://www.entrenamiento.com/wp-content/uploads/2020/03/comidas-procesadas-perder-peso.jpg" alt="Тофу"
+      class="product-image">
+    </div>
+    <div class="product-content">
+     <h3 class="product-title">Тофу</h3>
+     <p class="product-description">Растительный источник полноценного белка из соевых бобов</p>
+
+     <div class="product-benefits">
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>8 г белка на 100 г</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Содержит все аминокислоты</span>
+      </div>
+      <div class="benefit-item">
+       <i class="fas fa-check-circle"></i>
+       <span>Низкокалорийный</span>
+      </div>
+     </div>
+
+     <div class="product-footer">
+      <div class="product-price">300 ₽/кг</div>
+     </div>
+    </div>
+   </div>
+  </div>
+ </div>
+
+ <!-- Добавляем перед закрывающим тегом body -->
+ <div class="footer-nav">
+  <div class="nav-icons">
+   <!-- Иконка еды -->
+   <a href="#" class="a-blank">
+    <div class="nav-item">
+     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-fork-knife"
+      viewBox="0 0 16 16">
+      <path
+       d="M13 .5c0-.276-.226-.506-.498-.465-1.703.257-2.94 2.012-3 8.462a.5.5 0 0 0 .498.5c.56.01 1 .13 1 1.003v5.5a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5zM4.25 0a.25.25 0 0 1 .25.25v5.122a.128.128 0 0 0 .256.006l.233-5.14A.25.25 0 0 1 5.24 0h.522a.25.25 0 0 1 .25.238l.233 5.14a.128.128 0 0 0 .256-.006V.25A.25.25 0 0 1 6.75 0h.29a.5.5 0 0 1 .498.458l.423 5.07a1.69 1.69 0 0 1-1.059 1.711l-.053.022a.92.92 0 0 0-.58.884L6.47 15a.971.971 0 1 1-1.942 0l.202-6.855a.92.92 0 0 0-.58-.884l-.053-.022a1.69 1.69 0 0 1-1.059-1.712L3.462.458A.5.5 0 0 1 3.96 0z" />
+     </svg>
+     <span class="nav-label">Питание</span>
+    </div>
+   </a>
+
+   <!-- Иконка вопросов -->
+   <a href="index.html" class="a-blank">
+    <div class="nav-item">
+     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar-week"
+      viewBox="0 0 16 16">
+      <path
+       d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z" />
+      <path
+       d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
+     </svg>
+     <span class="nav-label">Планы</span>
+    </div>
+   </a>
+
+   <!-- Иконка таблеток -->
+   <a href="index3.html" class="a-blank">
+    <div class="nav-item">
+     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-capsule"
+      viewBox="0 0 16 16">
+      <path
+       d="M1.828 8.9 8.9 1.827a4 4 0 1 1 5.657 5.657l-7.07 7.071A4 4 0 1 1 1.827 8.9Zm9.128.771 2.893-2.893a3 3 0 1 0-4.243-4.242L6.713 5.429z" />
+     </svg>
+     <span class="nav-label">Добавки</span>
+    </div>
+   </a>
+  </div>
+ </div>
+
+ <script>
+  function filterProducts(category) {
+   const products = document.querySelectorAll('.product-card');
+   const filterBtns = document.querySelectorAll('.filter-btn');
+
+   // Обновляем активную кнопку фильтра
+   filterBtns.forEach(btn => {
+    btn.classList.remove('active');
+    if ((category === 'all' && btn.classList.contains('all')) ||
+     btn.classList.contains(category)) {
+     btn.classList.add('active');
+    }
+   });
+
+   // Фильтруем продукты
+   products.forEach(product => {
+    if (category === 'all' || product.dataset.category === category) {
+     product.style.display = 'flex';
+    } else {
+     product.style.display = 'none';
+    }
+   });
+  }
+
+  // Поиск продуктов
+  const searchInput = document.querySelector('.search-box input');
+  searchInput.addEventListener('input', function () {
+   const searchTerm = this.value.toLowerCase();
+   const products = document.querySelectorAll('.product-card');
+
+   products.forEach(product => {
+    const title = product.querySelector('.product-title').textContent.toLowerCase();
+    const description = product.querySelector('.product-description').textContent.toLowerCase();
+
+    if (title.includes(searchTerm) || description.includes(searchTerm)) {
+     product.style.display = 'flex';
+    } else {
+     product.style.display = 'none';
+    }
+   });
+  });
+ </script>
+</body>
+
+</html>
