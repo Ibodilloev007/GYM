@@ -1,0 +1,1454 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <title>Календарь тренировок</title>
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+ <link
+  href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap"
+  rel="stylesheet">
+ <style>
+  :root {
+   --primary: #6c63ff;
+   --primary-light: #8a84ff;
+   --primary-dark: #554fe0;
+   --secondary: #ff6584;
+   --black: #0a0a0a;
+   --dark-gray: #171717;
+   --gray: #262626;
+   --light-gray: #404040;
+   --white: #f5f5f5;
+   --green: #4caf50;
+   --gradient-green: linear-gradient(135deg, var(--primary), var(--secondary));
+   --card-bg: rgba(30, 30, 30, 0.8);
+  }
+
+  * {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+   font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+  }
+
+  body {
+   background-color: var(--black);
+   color: var(--white);
+   line-height: 1.6;
+   min-height: 100vh;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   padding: 2rem;
+   position: relative;
+   overflow-x: hidden;
+   padding-bottom: 100px;
+
+  }
+
+  body::before {
+   content: '';
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background: radial-gradient(circle at 20% 30%, rgba(108, 99, 255, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(255, 101, 132, 0.15) 0%, transparent 40%);
+   z-index: -1;
+   animation: gradientMove 20s ease infinite alternate;
+  }
+
+  @keyframes gradientMove {
+   0% {
+    transform: translate(0, 0);
+   }
+
+   50% {
+    transform: translate(-5%, 5%);
+   }
+
+   100% {
+    transform: translate(5%, -5%);
+   }
+  }
+
+  header {
+   margin-bottom: 3rem;
+   text-align: center;
+   animation: fadeIn 0.8s ease-out;
+   max-width: 800px;
+   width: 100%;
+  }
+
+  h1 {
+   font-size: 2.8rem;
+   margin-bottom: 0.5rem;
+   background: var(--gradient-green);
+   -webkit-background-clip: text;
+   background-clip: text;
+   -webkit-text-fill-color: transparent;
+   letter-spacing: -0.03em;
+   font-family: 'Montserrat', sans-serif;
+  }
+
+  .subtitle {
+   color: var(--light-gray);
+   font-size: 1.1rem;
+   font-weight: 500;
+  }
+
+  .calendar {
+   display: grid;
+   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+   gap: 1.5rem;
+   width: 100%;
+   max-width: 1200px;
+   animation: slideUp 0.6s ease-out;
+  }
+
+  .day {
+   background: var(--card-bg);
+   border-radius: 16px;
+   padding: 1.5rem 1rem;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+   border: 1px solid rgba(255, 255, 255, 0.05);
+   backdrop-filter: blur(10px);
+   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+   position: relative;
+   z-index: 1;
+   cursor: pointer;
+  }
+
+  .day::before {
+   content: '';
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background: linear-gradient(45deg, rgba(108, 99, 255, 0.1), rgba(255, 101, 132, 0.1));
+   opacity: 0;
+   transition: opacity 0.3s ease;
+   z-index: -1;
+   border-radius: 16px;
+  }
+
+  .day:hover {
+   transform: translateY(-8px);
+   box-shadow: 0 15px 30px rgba(108, 99, 255, 0.3);
+   border-color: var(--primary);
+  }
+
+  .day:hover::before {
+   opacity: 1;
+  }
+
+  .day.current-day {
+   border: 2px solid var(--primary);
+   box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.3);
+   animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+   0% {
+    box-shadow: 0 0 0 0 rgba(108, 99, 255, 0.4);
+   }
+
+   70% {
+    box-shadow: 0 0 0 10px rgba(108, 99, 255, 0);
+   }
+
+   100% {
+    box-shadow: 0 0 0 0 rgba(108, 99, 255, 0);
+   }
+  }
+
+  .day-name {
+   font-weight: 600;
+   margin-bottom: 1rem;
+   font-size: 1.2rem;
+   color: var(--white);
+   font-family: 'Montserrat', sans-serif;
+  }
+
+  .day-status {
+   width: 60px;
+   height: 60px;
+   border-radius: 50%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   margin-bottom: 1rem;
+   font-size: 1.8rem;
+   background: var(--gradient-green);
+   box-shadow: 0 8px 20px rgba(108, 99, 255, 0.3);
+   transition: all 0.3s;
+  }
+
+  .day-status.rest {
+   background: var(--gray);
+   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .day-status:hover {
+   transform: scale(1.1) rotate(10deg);
+  }
+
+  .day-description {
+   font-size: 1rem;
+   text-align: center;
+   color: var(--light-gray);
+   font-weight: 500;
+   background: rgba(0, 0, 0, 0.3);
+   padding: 0.5rem 1rem;
+   border-radius: 50px;
+   transition: all 0.3s;
+  }
+
+  .day:hover .day-description {
+   background: rgba(108, 99, 255, 0.2);
+   color: var(--white);
+  }
+
+  /* Модальное окно */
+  .modal {
+   display: none;
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background-color: rgba(0, 0, 0, 0.95);
+   z-index: 1000;
+   overflow-y: auto;
+   padding: 1rem;
+   backdrop-filter: blur(10px);
+  }
+
+  .modal-content {
+   background: var(--dark-gray);
+   max-width: 800px;
+   margin: 2rem auto;
+   border-radius: 16px;
+   padding: 2.5rem;
+   position: relative;
+   border: 1px solid var(--gray);
+   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+   animation: modalEnter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @keyframes modalEnter {
+   from {
+    opacity: 0;
+    transform: translateY(20px);
+   }
+
+   to {
+    opacity: 1;
+    transform: translateY(0);
+   }
+  }
+
+  .close-btn {
+   position: absolute;
+   top: 1.5rem;
+   right: 1.5rem;
+   width: 40px;
+   height: 40px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   background: var(--gray);
+   border-radius: 50%;
+   cursor: pointer;
+   transition: all 0.3s;
+   border: none;
+   color: var(--white);
+   z-index: 1001;
+  }
+
+  .close-btn:hover {
+   background: var(--primary);
+   transform: rotate(90deg) scale(1.1);
+  }
+
+  .modal-title {
+   color: var(--white);
+   margin-bottom: 2rem;
+   font-size: 2rem;
+   position: relative;
+   padding-bottom: 1rem;
+   font-family: 'Montserrat', sans-serif;
+  }
+
+  .modal-title::after {
+   content: '';
+   position: absolute;
+   bottom: 0;
+   left: 0;
+   width: 80px;
+   height: 4px;
+   background: var(--gradient-green);
+   border-radius: 2px;
+  }
+
+  .exercise {
+   background: var(--black);
+   border-radius: 12px;
+   padding: 1.5rem;
+   margin-bottom: 1.5rem;
+   border: 1px solid var(--gray);
+   animation: slideIn 0.4s ease-out;
+   transition: all 0.3s ease;
+  }
+
+  .exercise:hover {
+   border-color: var(--primary);
+   box-shadow: 0 8px 20px rgba(108, 99, 255, 0.2);
+  }
+
+  @keyframes slideIn {
+   from {
+    opacity: 0;
+    transform: translateX(20px);
+   }
+
+   to {
+    opacity: 1;
+    transform: translateX(0);
+   }
+  }
+
+  .exercise-title {
+   font-size: 1.3rem;
+   margin-bottom: 1rem;
+   color: var(--white);
+   display: flex;
+   align-items: center;
+   gap: 0.5rem;
+   font-family: 'Montserrat', sans-serif;
+  }
+
+  .exercise-title::before {
+   content: '▹';
+   color: var(--primary);
+   font-size: 1.5rem;
+  }
+
+  .exercise-details {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 0.8rem;
+   margin-bottom: 1.5rem;
+  }
+
+  .detail-item {
+   background: var(--gradient-green);
+   padding: 0.5rem 1rem;
+   border-radius: 8px;
+   font-size: 0.9rem;
+   font-weight: 500;
+   display: flex;
+   align-items: center;
+   gap: 0.5rem;
+  }
+
+  .detail-item i {
+   font-size: 0.8rem;
+  }
+
+  .media-container {
+   position: relative;
+   border-radius: 16px;
+   overflow: hidden;
+   margin-top: 1rem;
+   background: var(--black);
+   transition: transform 0.3s;
+   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .media-container:hover {
+   transform: perspective(1000px) rotateX(2deg) rotateY(2deg);
+  }
+
+  .media-container iframe {
+   width: 100%;
+   height: 400px;
+   border: none;
+   border-radius: 12px;
+  }
+
+  .notes {
+   margin-top: 1.5rem;
+   padding: 1.25rem;
+   background: rgba(108, 99, 255, 0.1);
+   border-radius: 8px;
+   font-size: 0.95rem;
+   line-height: 1.6;
+   border: 1px solid var(--gray);
+  }
+
+  .notes p {
+   margin-bottom: 0.5rem;
+  }
+
+  .notes strong {
+   color: var(--primary-light);
+  }
+
+  /* Нижняя панель навигации */
+  .footer-nav {
+   position: fixed;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   background: var(--dark-gray);
+   padding: 1rem;
+   border-top: 1px solid var(--gray);
+   z-index: 999;
+   backdrop-filter: blur(10px);
+   text-decoration: none;
+  }
+
+  .nav-icons {
+   display: flex;
+   justify-content: space-around;
+   align-items: center;
+   max-width: 600px;
+   margin: 0 auto;
+  }
+
+  .nav-item {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 0.5rem;
+   cursor: pointer;
+   transition: all 0.3s;
+   padding: 0.5rem 1rem;
+   border-radius: 8px;
+   position: relative;
+  }
+
+  .nav-item::after {
+   content: '';
+   position: absolute;
+   bottom: -5px;
+   left: 50%;
+   transform: translateX(-50%);
+   width: 0;
+   height: 2px;
+   background: var(--primary);
+   transition: width 0.3s;
+  }
+
+  .nav-item:hover {
+   background: rgba(108, 99, 255, 0.1);
+  }
+
+  .nav-item:hover::after {
+   width: 100%;
+  }
+
+  .nav-item.active {
+   background: rgba(108, 99, 255, 0.2);
+  }
+
+  .nav-item.active::after {
+   width: 100%;
+  }
+
+  .nav-icon {
+   width: 24px;
+   height: 24px;
+   color: var(--white);
+   transition: all 0.3s;
+  }
+
+  .nav-item:hover .nav-icon {
+   color: var(--primary);
+   transform: translateY(-3px);
+  }
+
+  .nav-label {
+   font-size: 0.8rem;
+   color: var(--light-gray);
+   transition: all 0.3s;
+  }
+
+  .nav-item:hover .nav-label {
+   color: var(--white);
+  }
+
+  /* Адаптивность */
+  @media (max-width: 768px) {
+   h1 {
+    font-size: 2.2rem;
+   }
+
+   .calendar {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+   }
+
+   .modal-content {
+    padding: 1.5rem;
+    margin: 1rem;
+   }
+
+   .media-container iframe {
+    height: 250px;
+   }
+
+   .footer-nav {
+    padding: 0.5rem;
+   }
+
+   .nav-item {
+    padding: 0.5rem;
+   }
+
+   .nav-icon {
+    width: 20px;
+    height: 20px;
+   }
+
+   .nav-label {
+    font-size: 0.7rem;
+   }
+  }
+
+  @media (min-width: 768px) {
+   .nav-label {
+    display: block;
+   }
+  }
+
+  /* Анимации */
+  @keyframes fadeIn {
+   from {
+    opacity: 0;
+    transform: translateY(20px);
+   }
+
+   to {
+    opacity: 1;
+    transform: translateY(0);
+   }
+  }
+
+  @keyframes slideUp {
+   from {
+    opacity: 0;
+    transform: translateY(40px);
+   }
+
+   to {
+    opacity: 1;
+    transform: translateY(0);
+   }
+  }
+
+  /* Кнопка "Наверх" */
+  .scroll-top {
+   position: fixed;
+   bottom: 80px;
+   right: 30px;
+   width: 50px;
+   height: 50px;
+   background: var(--gradient-green);
+   color: var(--white);
+   border-radius: 50%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   font-size: 1.2rem;
+   cursor: pointer;
+   opacity: 0;
+   visibility: hidden;
+   transition: all 0.3s ease;
+   box-shadow: 0 5px 15px rgba(108, 99, 255, 0.3);
+   z-index: 999;
+   border: none;
+  }
+
+  .scroll-top.active {
+   opacity: 1;
+   visibility: visible;
+  }
+
+  .scroll-top:hover {
+   transform: translateY(-5px) scale(1.1);
+   box-shadow: 0 8px 20px rgba(108, 99, 255, 0.4);
+  }
+
+  /* Стили для дней отдыха */
+  .rest-day-content {
+   text-align: center;
+   padding: 2rem;
+  }
+
+  .rest-icon {
+   font-size: 4rem;
+   margin-bottom: 1.5rem;
+   color: var(--light-gray);
+  }
+
+  .rest-title {
+   font-size: 1.8rem;
+   margin-bottom: 1rem;
+   color: var(--white);
+   font-family: 'Montserrat', sans-serif;
+  }
+
+  .rest-text {
+   color: var(--light-gray);
+   margin-bottom: 2rem;
+   max-width: 500px;
+   margin-left: auto;
+   margin-right: auto;
+  }
+
+  .rest-tips {
+   background: rgba(108, 99, 255, 0.1);
+   border-radius: 12px;
+   padding: 1.5rem;
+   margin-top: 2rem;
+   border: 1px solid var(--gray);
+  }
+
+  .rest-tips-title {
+   font-size: 1.2rem;
+   margin-bottom: 1rem;
+   color: var(--primary-light);
+   display: flex;
+   align-items: center;
+   gap: 0.5rem;
+  }
+
+  .rest-tips-title i {
+   font-size: 1.2rem;
+  }
+
+  .rest-tips-list {
+   list-style-type: none;
+  }
+
+  .rest-tips-list li {
+   margin-bottom: 0.8rem;
+   position: relative;
+   padding-left: 1.5rem;
+  }
+
+  .rest-tips-list li::before {
+   content: '•';
+   position: absolute;
+   left: 0;
+   color: var(--primary);
+   font-size: 1.2rem;
+  }
+
+  /* Прогресс бар */
+  .progress-container {
+   width: 100%;
+   height: 6px;
+   background: var(--gray);
+   border-radius: 3px;
+   margin: 1.5rem 0;
+   overflow: hidden;
+  }
+
+  .progress-bar {
+   height: 100%;
+   background: var(--gradient-green);
+   border-radius: 3px;
+   transition: width 0.5s ease;
+   width: 0;
+  }
+
+  /* Анимация загрузки */
+  @keyframes loading {
+   0% {
+    transform: rotate(0deg);
+   }
+
+   100% {
+    transform: rotate(360deg);
+   }
+  }
+
+  .loading-spinner {
+   display: inline-block;
+   width: 20px;
+   height: 20px;
+   border: 3px solid rgba(108, 99, 255, 0.3);
+   border-radius: 50%;
+   border-top-color: var(--primary);
+   animation: loading 1s ease-in-out infinite;
+   margin-right: 8px;
+  }
+ </style>
+</head>
+
+<body>
+ <header>
+  <h1>Календарь тренировок</h1>
+  <p class="subtitle">Оптимальный график для вашего прогресса</p>
+  <div class="progress-container">
+   <div class="progress-bar" id="progressBar"></div>
+  </div>
+ </header>
+
+ <div class="calendar" id="calendar">
+  <!-- Days will be inserted here by JavaScript -->
+ </div>
+
+ <!-- Модальное окно -->
+ <div id="workoutModal" class="modal">
+  <div class="modal-content">
+   <button class="close-btn">&times;</button>
+   <h2 class="modal-title" id="modalTitle">Тренировка: Понедельник</h2>
+
+   <div class="workout-plan" id="workoutPlan">
+    <!-- Содержимое тренировки будет вставлено здесь -->
+   </div>
+  </div>
+ </div>
+
+ <!-- Нижняя панель навигации -->
+ <div class="footer-nav">
+  <div class="nav-icons">
+   <!-- Иконка календаря (активная) -->
+   <div class="nav-item active">
+    <i class="fas fa-calendar-alt nav-icon"></i>
+    <span class="nav-label">Тренировки</span>
+   </div>
+
+   <!-- Иконка питания -->
+   <a href="index4.html" class="a-blank">
+    <div class="nav-item">
+     <i class="fas fa-utensils nav-icon"></i>
+     <span class="nav-label">Питание</span>
+    </div>
+   </a>
+
+   <!-- Иконка вопросов -->
+   <a href="index2.html" class="a-blank">
+    <div class="nav-item">
+     <i class="fas fa-question-circle nav-icon"></i>
+     <span class="nav-label">Вопросы</span>
+    </div>
+   </a>
+
+   <!-- Иконка добавок -->
+   <a href="index3.html" class="a-blank">
+    <div class="nav-item">
+     <i class="fas fa-pills nav-icon"></i>
+     <span class="nav-label">Добавки</span>
+    </div>
+   </a>
+  </div>
+ </div>
+
+ <!-- Кнопка "Наверх" -->
+ <button class="scroll-top">
+  <i class="fas fa-arrow-up"></i>
+ </button>
+
+ <script>
+  document.addEventListener("DOMContentLoaded", function () {
+   const calendar = document.getElementById("calendar");
+   const modal = document.getElementById("workoutModal");
+   const modalTitle = document.getElementById("modalTitle");
+   const workoutPlan = document.getElementById("workoutPlan");
+   const closeBtn = document.querySelector(".close-btn");
+   const scrollTopBtn = document.querySelector(".scroll-top");
+   const progressBar = document.getElementById("progressBar");
+
+   // Анимация прогресс бара
+   setTimeout(() => {
+    progressBar.style.width = "100%";
+   }, 300);
+
+   const daysOfWeek = [
+    "Понедельник",
+    "Вторник",
+    "Среда",
+    "Четверг",
+    "Пятница",
+    "Суббота",
+    "Воскресенье",
+   ];
+   const currentDate = new Date();
+   const currentDay = currentDate.getDay(); // 0 (воскресенье) - 6 (суббота)
+
+   // Adjust to match our days array (0 - понедельник)
+   let adjustedCurrentDay = currentDay - 1;
+   if (adjustedCurrentDay < 0) adjustedCurrentDay = 6; // воскресенье становится 6
+
+   // Планы тренировок для каждого дня
+   const workoutPlans = {
+    Понедельник: {
+     type: "Спина, плечи, трапеция, трицепс",
+     exercises: [
+      {
+       name: "Подтягивание с весом 15кг",
+       sets: "3 подхода",
+       reps: "10-12 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1521897066/ru/видео/подбородок-вверх-обратный-широкий-хват-фитнес-упражнение-анимация-тренировки-демонстрация.mp4?s=mp4-640x640-is&k=20&c=M7lETMaN97Ee6pn4NBeIgcoRfffU9jstU8ByzGB91EU=",
+       },
+       notes:
+        'Вес добавляйте постепенно, сохраняя чистую технику. Если начинает "ломаться" форма — уменьшайте отягощение',
+      },
+      {
+       name: "Вертикальная тяга",
+       sets: "4 подхода",
+       reps: "8-12 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1694871927/ru/видео/мужчина-тащит-штангу-вниз-по-линии-машины-с-вытягиванием-широчайшей-широчайшей-мультяшной.mp4?s=mp4-640x640-is&k=20&c=f-UbSqPuqgP2COmzt4KbIl-3LqW-wB8rK680R6OO4iA=",
+       },
+       notes:
+        "Держите спину прямо, сводите лопатки при опускании рукояти к груди, локти направляйте вниз и назад, избегайте раскачивания корпуса, чувствуйте напряжение в широчайших мышцах спины, а не в руках. Опускание - мощное (2 сек), подъем - плавное (2 сек).",
+      },
+      {
+       name: "Т-тяга на тренажёре",
+       sets: "4 подхода",
+       reps: "10-12 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://fitwill.app/videos/0606/lever-t-bar-row-plate-loaded.mp4",
+       },
+       notes:
+        "Работает спина, а не руки. Если тянете плечами — уменьшите вес.",
+      },
+      {
+       name: "Горизонтальная тяга блока",
+       sets: "3 подхода",
+       reps: "10-12 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1521893277/ru/видео/анимация-тренировки-по-фитнесу-с-кабельным-сидячим-рядом-демонстрация-мужских-мышц-с.mp4?s=mp4-640x640-is&k=20&c=NprmPOLRz-5FObpghVD2HbnqEpQL5FPjuaTGhzhCsLQ=",
+       },
+       notes:
+        "Работает спина, а не руки. Если тянете плечами — уменьшите вес.",
+      },
+      {
+       name: "Махи гантелями через стороны стоя",
+       sets: "3 подхода",
+       reps: "10-12 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1558046837/ru/видео/гантели-на-одной-руке-боковой-подъем-фитнес-упражнения-анимация-тренировки-мужские-мышцы-с.mp4?s=mp4-640x640-is&k=20&c=5S6e_Hcbs8aJ1zCn_-v3fiz6KkZ_0Ez8EYlYJte2DX0=",
+       },
+       notes:
+        "Не берите слишком тяжелый вес — это упражнение на точность, а не на силу. Читинг сводит эффективность к нулю.",
+      },
+      {
+       name: "Жим гантелей сидя",
+       sets: "3 подхода",
+       reps: "10-12 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1557804462/ru/видео/жим-гантелей-от-плеч-анимация-тренировки-фитнес-упражнений-демонстрация-выделения-мужских.mp4?s=mp4-640x640-is&k=20&c=Qc-HPZ1aY9-ZyNjYLBKL2Tm7O0iLkdZRldHiBuMbJts=",
+       },
+       notes:
+        " Не прогибайте поясницу и не помогайте себе ногами. Работают только плечи — если тянете спиной, снизьте вес. Дышите ровно: выдох на усилии (вверх).",
+      },
+      {
+       name: "Обратная бабочка",
+       sets: "3 подхода",
+       reps: "10-12 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1496158689/ru/видео/3d-рендеринг-анимации-спортсмена-тренирующего-мышцы-плеч-с-помощью-тренажера-для-вытягивания.mp4?s=mp4-640x640-is&k=20&c=4IjWg1Sh4sfnyCq5TVcjQkjnVzPB4xeBzgPqermWryM=",
+       },
+       notes:
+        "Движение узкоамплитудное — не гонитесь за большим весом, иначе подключится спина. Чувствуйте жжение в задних дельтах.",
+      },
+      {
+       name: "Свенда стоя",
+       sets: "3 подхода",
+       reps: "8-10 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1558073374/ru/видео/передняя-часть-пластины-поднимает-фитнес-упражнение-анимация-тренировки-мужская-подсветка.mp4?s=mp4-640x640-is&k=20&c=wnOqCLrwPeRKDBu-8n14jh7ZG3Ou3X2lblhfcZruOSU=",
+       },
+       notes:
+        "В крайней точке задержите жим на 1-2 сек для жжения в грудных. Держите пресс в напряжении.",
+      },
+      {
+       name: "Подъёмы плеч",
+       sets: "3 подхода",
+       reps: "10-12 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1558048519/ru/видео/гантель-сзади-полный-пожимает-плечами-фитнес-упражнение-анимация-тренировки-мужские-мышцы.mp4?s=mp4-640x640-is&k=20&c=LfoeZduQKaJTk_37ONK2rfR85sthDAEPMOumJDcrCQw=",
+       },
+       notes:
+        " Не сгибайте руки в локтях и не горбите спину. Работает только трапеция — если чувствуете предплечья, уменьшите вес и проверьте технику. Дыхание: выдох на подъеме, вдох при опускании.",
+      },
+      {
+       name: "Тяга к подбородку",
+       sets: "3 подхода",
+       reps: "10-12 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1639439125/ru/видео/3d-иллюстрация-персонажа-выполняющего-вертикальный-ряд-со-штангой.mp4?s=mp4-640x640-is&k=20&c=lCeWMsrUbnES5V1jDEMpSNNpiABAunk9kWO2OIicC5w=",
+       },
+       notes:
+        " Чувствуете жжение в средних дельтах и верх трапеций. Если нагрузка уходит в предплечья — ужесточите контроль за техникой.",
+      },
+      {
+       name: "Французский жим",
+       sets: "3 подхода",
+       reps: "10-12 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1557844953/ru/видео/штанга-лежа-разгибание-трицепса-фитнес-упражнение-анимация-тренировки-мужская-мышечная.mp4?s=mp4-640x640-is&k=20&c=IrAwmPJHK7YtkNkI32x3dQ2_P-HApUPOqrhLJtsKVnY=",
+       },
+       notes:
+        "Чем ближе локти друг к другу — тем сильнее жжение в трицепсе. Для безопасности используйте EZ-гриф.",
+      },
+      {
+       name: "Разгибание рук на блоке",
+       sets: "3 подхода",
+       reps: "10-12 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1558156875/ru/видео/анимация-тренировки-фитнес-упражнений-cable-pushdown-демонстрация-выделения-мужских-мышц-в.mp4?s=mp4-640x640-is&k=20&c=Mr1kgR-jzlr05hU0UwtC3q83k02U4bT108_vBIkW0vU=",
+       },
+       notes:
+        "В нижней точке задержка на 1-2 сек + дополнительное разведение рук назад усилит эффект. Используйте канат (не прямую рукоять) для лучшей изоляции.",
+      },
+     ],
+    },
+    Среда: {
+     type: "Ноги, пресс, Гиперэкстензия",
+     exercises: [
+      {
+       name: "Приседания со штангой",
+       sets: "4 подхода",
+       reps: "8-10 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1557737798/ru/видео/штанга-узкая-стойка-приседания-фитнес-упражнение-анимация-тренировки-мужские-мышцы.mp4?s=mp4-640x640-is&k=20&c=ruuM0Dwv7HveWR4H--pRBx5T-0h5ZpafbUBOhXf75eE=",
+       },
+       notes:
+        "Чем шире стойка — тем больше нагрузка на ягодицы. Держите пресс напряженным для стабилизации.",
+      },
+      {
+       name: "Выпады с гантелями",
+       sets: "4 подхода",
+       reps: "6-8 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1557782639/ru/видео/анимация-фитнес-тренировки-с-разделенными-приседаниями-с-гантелями-демонстрация-мужских-мышц.mp4?s=mp4-640x640-is&k=20&c=62b-8IrAC-ZxuPwDh08xUhGKYYfpRoAkef9WTfvj-aM=",
+       },
+       notes:
+        "Чем длиннее шаг — тем больше работают ягодицы. Для баланса можно делать у стены.",
+      },
+      {
+       name: "Жим ногами",
+       sets: "4 подхода",
+       reps: "6-8 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1557740634/ru/видео/жим-ногами-широкая-высокая-стойка-фитнес-упражнение-анимация-тренировки-мужская-мышечная.mp4?s=mp4-640x640-is&k=20&c=HgJVgfWKHzxNG8tirvR28I_4Z_Z7-RVnP9ir7BGSwCM=",
+       },
+       notes:
+        "Чем длиннее шаг — тем больше работают ягодицы. Для баланса можно делать у стены.",
+      },
+      {
+       name: "Разведение ног в тренажёре",
+       sets: "3 подхода",
+       reps: "8-10 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1557750806/ru/видео/сидячая-машина-приводящая-мышца-бедра-фитнес-упражнение-анимация-тренировки-мужская-мышечная.mp4?s=mp4-640x640-is&k=20&c=qUQfnbsZXI45wUB1VsmslJkylb5MflqSgdUPFftQq6E=",
+       },
+       notes:
+        "В верхней точке задержитесь на 1-2 сек для максимума нагрузки. Не гонитесь за весом — здесь важна точечная изоляция.",
+      },
+      {
+       name: "Разгибание ног в тренажере",
+       sets: "4 подхода",
+       reps: "10-15 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1346583381/ru/видео/разгибать-ноги.mp4?s=mp4-640x640-is&k=20&c=WcptEPBBeZHmyJjf_AwRZ0KIrAa_l9l3x30_LwUThkU=",
+       },
+       notes:
+        "В верхней точке задержитесь на 1-2 сек для максимума нагрузки. Не гонитесь за весом — здесь важна точечная изоляция.",
+      },
+      {
+       name: "Подъем носков в тренажере сидя",
+       sets: "3 подхода",
+       reps: "15-20 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1557749168/ru/видео/сидячий-тренажер-для-икр-фитнес-упражнение-анимация-тренировки-демонстрация-мужских-мышц-в.mp4?s=mp4-640x640-is&k=20&c=5N9hVSCMMx_4kb7AuGxtIX7p557f8c73YkeAPFa86OQ=",
+       },
+       notes:
+        "В верхней точке задержитесь на 1-2 сек. Для глубины опускайте пятки как можно ниже. Вес берите умеренный — икры любят многоповторку (15-20 раз).",
+      },
+      {
+       name: "Горизонтальная гиперэкстензия",
+       sets: "3 подхода",
+       reps: "8-10 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1521870980/ru/видео/тренажер-для-разгибания-спины-фитнес-упражнения-анимация-тренировки-мужская-мышечная.mp4?s=mp4-640x640-is&k=20&c=gP61xY59rjuj0wxLo_8t0o8YqrZwfuJrjcLS5dS4BYE=",
+       },
+       notes:
+        "Руки скрещены на груди или за головой (без давления на шею). Движение медленное, акцент на ягодицы и бицепс бедра.",
+      },
+      {
+       name: "Подъём корпуса на скамье",
+       sets: "4 подхода",
+       reps: "20-30 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1290160002/ru/видео/человек-ведение-желудка-хрустит-на-упражнение-скамейке-с-белым-фоном.mp4?s=mp4-640x640-is&k=20&c=OFJ3rhgoQHFGDqNI4QsR9TI_bQYtpEPC0g9PEfChWC0=",
+       },
+       notes:
+        "В верхней точке сожмите мышцы живота на 1-2 сек. Дышите: выдох на подъёме.",
+      },
+      {
+       name: "Подъем ног в упоре",
+       sets: "3 подхода",
+       reps: "10 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1454349583/ru/видео/подъемы-ног-фитнес-упражнения-тренировка-анимация-мужские-мышцы-подсветка-демонстрация-при.mp4?s=mp4-640x640-is&k=20&c=V6FODJJje-KuYU9hsEJEJUN_RZgAtWbfUGVdV1qpDpk=",
+       },
+       notes:
+        "В верхней точке вытолкните таз вперёд для максимума сокращения. Держите пресс в напряжении на всей амплитуде.",
+      },
+     ],
+    },
+    Пятница: {
+     type: "Грудь, бицепс, предплечья",
+     exercises: [
+      {
+       name: "Жим гантелей на горизонтальной скамье",
+       sets: "4 подхода",
+       reps: "8-10 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1557684083/ru/видео/жим-гантелей-от-груди-плоское-фитнес-упражнение-анимация-тренировки-демонстрация-мужских-мышц.mp4?s=mp4-640x640-is&k=20&c=60RuXs9-zKFBL-sGFVE9yNQL2dNJSCjr5BuXNyORkWU=",
+       },
+       notes:
+        "В верхней точке не сводите гантели полностью — держите напряжение в груди. Дышите: выдох на усилии.",
+      },
+      {
+       name: "Жим штанги на наклонной скамье",
+       sets: "3 подхода",
+       reps: "8-10 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1557636059/ru/видео/штанга-наклон-жим-лежа-фитнес-упражнение-анимация-тренировки-мужская-мышечная-подсветка-в.mp4?s=mp4-640x640-is&k=20&c=6YE35uBDxtwHZRlfEE5PhVEaNWlDJqP3vrrAQKkAtMc=",
+       },
+       notes:
+        "Чем выше наклон скамьи — тем больше нагрузка на верх груди и передние дельты. Держите вес подконтрольно.",
+      },
+      {
+       name: "Бабочка",
+       sets: "3 подхода",
+       reps: "8-10 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1557709691/ru/видео/машина-fly-фитнес-тренировка-анимация-тренировки-мужская-мышечная-подсветка-демонстрация-в.mp4?s=mp4-640x640-is&k=20&c=wX7KnsvF9xr7KVpTse14C0DHQx0BNMHI8HIYLGGGL4Q=",
+       },
+       notes:
+        "В точке максимального сведения задержитесь на 1-2 сек. Не берите слишком тяжелый вес — здесь важна изоляция, а не сила.",
+      },
+      {
+       name: "Жим лежа",
+       sets: "3 подхода",
+       reps: "8-10 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1557842825/ru/видео/штанга-лежа-крепким-хватом-фитнес-упражнение-анимация-тренировки-мужские-мышцы-демонстрация-в.mp4?s=mp4-640x640-is&k=20&c=--xSWRFC-vS_GSTUwec9gEf9QlB-iqlKXe0tdQbTOag=",
+       },
+       notes:
+        "В нижней точке — пауза 1 сек (без расслабления). Выжимайте вес за счёт груди, а не рук.",
+      },
+      {
+       name: "Глубокие отжимания",
+       sets: "3 подхода",
+       reps: "8-10 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1557672428/ru/видео/анимация-фитнес-упражнений-close-grip-push-up-exercise-демонстрация-мужских-мышц-с.mp4?s=mp4-640x640-is&k=20&c=1NNOA_uG24mqlMPH4qhL0eK5EBxY2ZriSW3fdQxSPUI=",
+       },
+       notes:
+        "Чем медленнее движение — тем больше нагрузка. Дышите: вдох при опускании, выдох на подъеме.",
+      },
+      {
+       name: "Отжимания на брусьях",
+       sets: "3 подхода",
+       reps: "8-10 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1557663486/ru/видео/погружение-в-грудь-фитнес-упражнение-анимация-тренировки-мужская-демонстрация-подсветки-мышц.mp4?s=mp4-640x640-is&k=20&c=mVOqDKdIxia7cEGCD5V5y-kETAVqsjEBIsXApDicyIY=",
+       },
+       notes:
+        "Внизу — пауза 1 сек (без расслабления). Для сложности — добавьте вес.",
+      },
+      {
+       name: "Подъем штанги на бицепс",
+       sets: "3 подхода",
+       reps: "8-10 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1553011597/ru/видео/штанга-бицепс-сгибание-широкого-хвата-фитнес-упражнение-анимация-тренировки-мужские-мышцы.mp4?s=mp4-640x640-is&k=20&c=Cj8GUxxjZuDW3mzj81yU3tNKdwfIDQ2dU7I-mlW86C0=",
+       },
+       notes:
+        " В верхней точке — пиковое сокращение (1-2 сек). Держите запястья ровно, не сгибайте их. Вес умеренный — бицепс любит «чистую» технику.",
+      },
+      {
+       name: "Подъем гантелей на бицепс, сидя на наклонной лавке",
+       sets: "3 подхода",
+       reps: "8-10 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1552999660/ru/видео/наклон-гантелей-одновременное-сгибание-фитнес-упражнения-анимация-тренировки-мужские-мышцы.mp4?s=mp4-640x640-is&k=20&c=fZ6op_1KpkrIB3wpPIJt-rjpoMtHtxmn7z4Qr1HE0L4=",
+       },
+       notes:
+        "В верхней точке — максимальное сокращение, в нижней — растяжение. Идеально для пика бицепса. Вес умеренный — техника важнее!",
+      },
+      {
+       name: "Подъем гантелей на бицепс хватом «Молот»",
+       sets: "3 подхода",
+       reps: "8-10 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1552999138/ru/видео/наклон-гантелей-молоток-одновременное-сгибание-фитнес-упражнение-анимация-тренировки-мужская.mp4?s=mp4-640x640-is&k=20&c=Zt_1dfOFmncB1q66i9vwd7-vfUO8YCH-7ooNfnqIr1c=",
+       },
+       notes:
+        "В верхней точке — пауза (1 сек), чувствуйте напряжение брахиалиса и предплечий. Наклон скамьи усиливает растяжение в нижней точке.",
+      },
+      {
+       name: "Подъем гантелей на бицепс стоя",
+       sets: "3 подхода",
+       reps: "8-10 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1553029231/ru/видео/перетаскивание-сгибание-гантели-фитнес-упражнение-анимация-тренировки-демонстрация-мужских.mp4?s=mp4-640x640-is&k=20&c=QcfctV8r-aBEINU4Muw6XRZfAWbvsIrPmm2NZi-xixo=",
+       },
+       notes:
+        "В верхней точке — пауза (1-2 сек), в нижней — растяжение. Для изоляции лучше сидя (исключает читинг).",
+      },
+      {
+       name: "Прокручивание штанги",
+       sets: "3 подхода",
+       reps: "8-10 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1557722329/ru/видео/штанга-сгибание-запястья-широкие-ноги-фитнес-упражнение-тренировка-анимация-мужская-мышечная.mp4?s=mp4-640x640-is&k=20&c=2-P1cFD857lzmaAX2srqSAKeoOdaT0X-DrKO6ktpRsk=",
+       },
+       notes:
+        "Медленно опускаем вес (3-4 сек) — эксцентрика критична для роста.",
+      },
+     ],
+    },
+    Воскресенье: {
+     type: "Ноги, пресс, Гиперэкстензия",
+     exercises: [
+      {
+       name: "Приседания со штангой",
+       sets: "4 подхода",
+       reps: "8-10 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1557737798/ru/видео/штанга-узкая-стойка-приседания-фитнес-упражнение-анимация-тренировки-мужские-мышцы.mp4?s=mp4-640x640-is&k=20&c=ruuM0Dwv7HveWR4H--pRBx5T-0h5ZpafbUBOhXf75eE=",
+       },
+       notes:
+        "Чем шире стойка — тем больше нагрузка на ягодицы. Держите пресс напряженным для стабилизации.",
+      },
+      {
+       name: "Выпады с гантелями",
+       sets: "4 подхода",
+       reps: "6-8 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1557782639/ru/видео/анимация-фитнес-тренировки-с-разделенными-приседаниями-с-гантелями-демонстрация-мужских-мышц.mp4?s=mp4-640x640-is&k=20&c=62b-8IrAC-ZxuPwDh08xUhGKYYfpRoAkef9WTfvj-aM=",
+       },
+       notes:
+        "Чем длиннее шаг — тем больше работают ягодицы. Для баланса можно делать у стены.",
+      },
+      {
+       name: "Жим ногами",
+       sets: "4 подхода",
+       reps: "6-8 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1557740634/ru/видео/жим-ногами-широкая-высокая-стойка-фитнес-упражнение-анимация-тренировки-мужская-мышечная.mp4?s=mp4-640x640-is&k=20&c=HgJVgfWKHzxNG8tirvR28I_4Z_Z7-RVnP9ir7BGSwCM=",
+       },
+       notes:
+        "Чем длиннее шаг — тем больше работают ягодицы. Для баланса можно делать у стены.",
+      },
+      {
+       name: "Разведение ног в тренажёре",
+       sets: "3 подхода",
+       reps: "8-10 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1557750806/ru/видео/сидячая-машина-приводящая-мышца-бедра-фитнес-упражнение-анимация-тренировки-мужская-мышечная.mp4?s=mp4-640x640-is&k=20&c=qUQfnbsZXI45wUB1VsmslJkylb5MflqSgdUPFftQq6E=",
+       },
+       notes:
+        "В верхней точке задержитесь на 1-2 сек для максимума нагрузки. Не гонитесь за весом — здесь важна точечная изоляция.",
+      },
+      {
+       name: "Разгибание ног в тренажере",
+       sets: "4 подхода",
+       reps: "10-15 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1346583381/ru/видео/разгибать-ноги.mp4?s=mp4-640x640-is&k=20&c=WcptEPBBeZHmyJjf_AwRZ0KIrAa_l9l3x30_LwUThkU=",
+       },
+       notes:
+        "В верхней точке задержитесь на 1-2 сек для максимума нагрузки. Не гонитесь за весом — здесь важна точечная изоляция.",
+      },
+      {
+       name: "Подъем носков в тренажере сидя",
+       sets: "3 подхода",
+       reps: "15-20 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1557749168/ru/видео/сидячий-тренажер-для-икр-фитнес-упражнение-анимация-тренировки-демонстрация-мужских-мышц-в.mp4?s=mp4-640x640-is&k=20&c=5N9hVSCMMx_4kb7AuGxtIX7p557f8c73YkeAPFa86OQ=",
+       },
+       notes:
+        "В верхней точке задержитесь на 1-2 сек. Для глубины опускайте пятки как можно ниже. Вес берите умеренный — икры любят многоповторку (15-20 раз).",
+      },
+      {
+       name: "Горизонтальная гиперэкстензия",
+       sets: "3 подхода",
+       reps: "8-10 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1521870980/ru/видео/тренажер-для-разгибания-спины-фитнес-упражнения-анимация-тренировки-мужская-мышечная.mp4?s=mp4-640x640-is&k=20&c=gP61xY59rjuj0wxLo_8t0o8YqrZwfuJrjcLS5dS4BYE=",
+       },
+       notes:
+        "Руки скрещены на груди или за головой (без давления на шею). Движение медленное, акцент на ягодицы и бицепс бедра.",
+      },
+      {
+       name: "Подъём корпуса на скамье",
+       sets: "4 подхода",
+       reps: "20-30 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1290160002/ru/видео/человек-ведение-желудка-хрустит-на-упражнение-скамейке-с-белым-фоном.mp4?s=mp4-640x640-is&k=20&c=OFJ3rhgoQHFGDqNI4QsR9TI_bQYtpEPC0g9PEfChWC0=",
+       },
+       notes:
+        "В верхней точке сожмите мышцы живота на 1-2 сек. Дышите: выдох на подъёме.",
+      },
+      {
+       name: "Подъем ног в упоре",
+       sets: "3 подхода",
+       reps: "10 повторений",
+       rest: "3 минуты",
+       media: {
+        type: "video",
+        src: "https://media.istockphoto.com/id/1454349583/ru/видео/подъемы-ног-фитнес-упражнения-тренировка-анимация-мужские-мышцы-подсветка-демонстрация-при.mp4?s=mp4-640x640-is&k=20&c=V6FODJJje-KuYU9hsEJEJUN_RZgAtWbfUGVdV1qpDpk=",
+       },
+       notes:
+        "В верхней точке вытолкните таз вперёд для максимума сокращения. Держите пресс в напряжении на всей амплитуде.",
+      },
+     ],
+    },
+   };
+
+   // Дни отдыха
+   const restDays = ["Вторник", "Четверг", "Суббота"];
+
+   // Создаем календарь
+   daysOfWeek.forEach((day, index) => {
+    const dayElement = document.createElement("div");
+    dayElement.className = "day";
+
+    // Подсвечиваем текущий день
+    if (index === adjustedCurrentDay) {
+     dayElement.classList.add("current-day");
+    }
+
+    const isWorkoutDay = workoutPlans[day] !== undefined;
+
+    dayElement.innerHTML = `
+      <div class="day-name">${day}</div>
+      <div class="day-status ${isWorkoutDay ? "workout" : "rest"}">
+        ${isWorkoutDay ? "🏋️" : "🛌"}
+      </div>
+      <div class="day-description">
+        ${isWorkoutDay ? workoutPlans[day].type : "День отдыха"}
+      </div>
+    `;
+
+    // Добавляем обработчик клика
+    dayElement.addEventListener("click", function () {
+     openWorkoutModal(day);
+    });
+
+    calendar.appendChild(dayElement);
+   });
+
+   // Функция для открытия модального окна с деталями тренировки
+   function openWorkoutModal(day) {
+    if (restDays.includes(day)) {
+     modalTitle.textContent = `${day}: День отдыха`;
+     workoutPlan.innerHTML = `
+        <div class="rest-day-content">
+          <div class="rest-icon">🛌</div>
+          <h3 class="rest-title">День активного восстановления</h3>
+          <p class="rest-text">Сегодня ваш организм восстанавливается после интенсивных тренировок. Это важная часть тренировочного процесса для роста мышц.</p>
+          
+          <div class="rest-tips">
+            <h4 class="rest-tips-title"><i class="fas fa-lightbulb"></i> Советы на день отдыха:</h4>
+            <ul class="rest-tips-list">
+              <li>Сделайте легкую кардио-сессию (ходьба, плавание)</li>
+              <li>Выполните растяжку или йогу</li>
+              <li>Пейте больше воды</li>
+              <li>Спите не менее 7-8 часов</li>
+              <li>Сфокусируйтесь на питании с достаточным количеством белка</li>
+            </ul>
+          </div>
+        </div>
+      `;
+    } else {
+     const plan = workoutPlans[day];
+     modalTitle.textContent = `${day}: ${plan.type}`;
+
+     let exercisesHTML = "";
+     plan.exercises.forEach((exercise, index) => {
+      let mediaHTML = "";
+
+      if (exercise.media) {
+       if (exercise.media.type === "video") {
+        mediaHTML = `
+          <div class="media-container">
+            <iframe src="${exercise.media.src}" frameborder="0" allowfullscreen></iframe>
+          </div>
+        `;
+       }
+      }
+
+      exercisesHTML += `
+        <div class="exercise">
+          <h3 class="exercise-title">${index + 1}. ${exercise.name}</h3>
+          <div class="exercise-details">
+            <span class="detail-item"><i class="fas fa-tasks"></i> ${exercise.sets}</span>
+            <span class="detail-item"><i class="fas fa-redo"></i> ${exercise.reps}</span>
+            <span class="detail-item"><i class="fas fa-clock"></i> Отдых: ${exercise.rest}</span>
+          </div>
+          ${mediaHTML}
+          <div class="notes">
+            <p><strong>Технические заметки:</strong> ${exercise.notes}</p>
+          </div>
+        </div>
+      `;
+     });
+
+     workoutPlan.innerHTML = exercisesHTML;
+    }
+
+    modal.style.display = "block";
+    document.body.style.overflow = "hidden";
+   }
+
+   // Закрытие модального окна
+   closeBtn.addEventListener("click", function () {
+    modal.style.display = "none";
+    document.body.style.overflow = "auto";
+   });
+
+   window.addEventListener("click", function (event) {
+    if (event.target === modal) {
+     modal.style.display = "none";
+     document.body.style.overflow = "auto";
+    }
+   });
+
+   // Кнопка "Наверх"
+   window.addEventListener("scroll", function () {
+    if (window.pageYOffset > 300) {
+     scrollTopBtn.classList.add("active");
+    } else {
+     scrollTopBtn.classList.remove("active");
+    }
+   });
+
+   scrollTopBtn.addEventListener("click", function () {
+    window.scrollTo({
+     top: 0,
+     behavior: "smooth"
+    });
+   });
+
+   // Плавная прокрутка для всех ссылок
+   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+     e.preventDefault();
+
+     const targetId = this.getAttribute('href');
+     const targetElement = document.querySelector(targetId);
+
+     if (targetElement) {
+      targetElement.scrollIntoView({
+       behavior: 'smooth'
+      });
+     }
+    });
+   });
+  });
+ </script>
+</body>
+
+</html>

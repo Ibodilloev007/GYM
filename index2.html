@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>FAQ по спортивному питанию</title>
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+ <link
+  href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap"
+  rel="stylesheet">
+ <style>
+  :root {
+   --primary: #6c63ff;
+   --primary-light: #8a84ff;
+   --primary-dark: #554fe0;
+   --secondary: #ff6584;
+   --black: #0a0a0a;
+   --dark-gray: #171717;
+   --gray: #262626;
+   --light-gray: #404040;
+   --white: #f5f5f5;
+   --card-bg: rgba(30, 30, 30, 0.8);
+  }
+
+  * {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+   font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+  }
+
+  body {
+   background-color: var(--black);
+   color: var(--white);
+   line-height: 1.6;
+   min-height: 100vh;
+   padding: 2rem;
+   position: relative;
+   overflow-x: hidden;
+   padding-bottom: 100px;
+  }
+
+  body::before {
+   content: '';
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background: radial-gradient(circle at 20% 30%, rgba(108, 99, 255, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(255, 101, 132, 0.15) 0%, transparent 40%);
+   z-index: -1;
+   animation: gradientMove 20s ease infinite alternate;
+  }
+
+  @keyframes gradientMove {
+   0% {
+    transform: translate(0, 0);
+   }
+
+   50% {
+    transform: translate(-5%, 5%);
+   }
+
+   100% {
+    transform: translate(5%, -5%);
+   }
+  }
+
+  .faq-container {
+   max-width: 800px;
+   margin: 0 auto;
+   padding: 2rem;
+   background: var(--card-bg);
+   border-radius: 16px;
+   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+   backdrop-filter: blur(10px);
+   border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .faq-title {
+   text-align: center;
+   margin-bottom: 2rem;
+   font-size: 2.5rem;
+   color: var(--white);
+   font-family: 'Montserrat', sans-serif;
+   position: relative;
+  }
+
+  .faq-title::after {
+   content: '';
+   position: absolute;
+   bottom: -10px;
+   left: 50%;
+   transform: translateX(-50%);
+   width: 80px;
+   height: 4px;
+   background: linear-gradient(90deg, var(--primary), var(--secondary));
+   border-radius: 2px;
+  }
+
+  /* Стили аккордеона */
+  .accordion {
+   width: 100%;
+  }
+
+  .accordion-item {
+   margin-bottom: 1rem;
+   background: var(--dark-gray);
+   border-radius: 12px;
+   overflow: hidden;
+   transition: all 0.3s ease;
+   border: 1px solid var(--gray);
+  }
+
+  .accordion-item:hover {
+   border-color: var(--primary);
+   box-shadow: 0 5px 15px rgba(108, 99, 255, 0.2);
+  }
+
+  .accordion-header {
+   width: 100%;
+   padding: 1.5rem;
+   background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+   border: none;
+   outline: none;
+   text-align: left;
+   cursor: pointer;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   transition: all 0.3s ease;
+   font-family: 'Montserrat', sans-serif;
+  }
+
+  .accordion-header:hover {
+   background: linear-gradient(90deg, var(--primary-light), var(--primary));
+  }
+
+  .accordion-header[aria-expanded="true"] {
+   background: linear-gradient(90deg, var(--primary-light), var(--primary));
+  }
+
+  .accordion-title {
+   font-size: 1.2rem;
+   font-weight: 600;
+   color: var(--white);
+   text-align: left;
+   flex: 1;
+  }
+
+  .accordion-icon {
+   width: 24px;
+   height: 24px;
+   position: relative;
+   transition: transform 0.3s ease;
+   margin-left: 1rem;
+  }
+
+  .accordion-icon::before,
+  .accordion-icon::after {
+   content: '';
+   position: absolute;
+   background-color: var(--white);
+   transition: all 0.3s ease;
+  }
+
+  .accordion-icon::before {
+   top: 50%;
+   left: 0;
+   width: 100%;
+   height: 2px;
+   transform: translateY(-50%);
+  }
+
+  .accordion-icon::after {
+   top: 0;
+   left: 50%;
+   width: 2px;
+   height: 100%;
+   transform: translateX(-50%);
+  }
+
+  .accordion-header[aria-expanded="true"] .accordion-icon {
+   transform: rotate(45deg);
+  }
+
+  .accordion-content {
+   padding: 0 1.5rem;
+   max-height: 0;
+   overflow: hidden;
+   transition: max-height 0.4s ease-in-out, padding 0.4s ease;
+  }
+
+  .accordion-content-inner {
+   padding: 1.5rem 0;
+  }
+
+  .accordion-content p {
+   margin-bottom: 1rem;
+   color: var(--white);
+   font-size: 1rem;
+   line-height: 1.6;
+  }
+
+  .accordion-content p:last-child {
+   margin-bottom: 0;
+  }
+
+  .accordion-content b {
+   color: var(--primary-light);
+  }
+
+  .accordion-header[aria-expanded="true"]+.accordion-content {
+   max-height: 1000px;
+  }
+
+  /* Нижняя панель навигации */
+  .footer-nav {
+   position: fixed;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   background: var(--dark-gray);
+   padding: 1rem;
+   border-top: 1px solid var(--gray);
+   z-index: 999;
+   backdrop-filter: blur(10px);
+  }
+
+  .nav-icons {
+   display: flex;
+   justify-content: space-around;
+   align-items: center;
+   max-width: 600px;
+   margin: 0 auto;
+  }
+
+  .nav-item {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 0.5rem;
+   cursor: pointer;
+   transition: all 0.3s;
+   padding: 0.5rem 1rem;
+   border-radius: 8px;
+   position: relative;
+  }
+
+  .nav-item::after {
+   content: '';
+   position: absolute;
+   bottom: -5px;
+   left: 50%;
+   transform: translateX(-50%);
+   width: 0;
+   height: 2px;
+   background: var(--primary);
+   transition: width 0.3s;
+  }
+
+  .nav-item:hover {
+   background: rgba(108, 99, 255, 0.1);
+  }
+
+  .nav-item:hover::after {
+   width: 100%;
+  }
+
+  .nav-item.active {
+   background: rgba(108, 99, 255, 0.2);
+  }
+
+  .nav-item.active::after {
+   width: 100%;
+  }
+
+  .nav-icon {
+   width: 24px;
+   height: 24px;
+   color: var(--white);
+   transition: all 0.3s;
+  }
+
+  .nav-item:hover .nav-icon {
+   color: var(--primary);
+   transform: translateY(-3px);
+  }
+
+  .nav-label {
+   font-size: 0.8rem;
+   color: var(--light-gray);
+   transition: all 0.3s;
+  }
+
+  .nav-item:hover .nav-label {
+   color: var(--white);
+  }
+
+  /* Кнопка "Наверх" */
+  .scroll-top {
+   position: fixed;
+   bottom: 80px;
+   right: 30px;
+   width: 50px;
+   height: 50px;
+   background: linear-gradient(45deg, var(--primary), var(--secondary));
+   color: var(--white);
+   border-radius: 50%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   font-size: 1.2rem;
+   cursor: pointer;
+   opacity: 0;
+   visibility: hidden;
+   transition: all 0.3s ease;
+   box-shadow: 0 5px 15px rgba(108, 99, 255, 0.3);
+   z-index: 999;
+   border: none;
+  }
+
+  .scroll-top.active {
+   opacity: 1;
+   visibility: visible;
+  }
+
+  .scroll-top:hover {
+   transform: translateY(-5px) scale(1.1);
+   box-shadow: 0 8px 20px rgba(108, 99, 255, 0.4);
+  }
+
+  /* Анимации */
+  @keyframes fadeIn {
+   from {
+    opacity: 0;
+    transform: translateY(20px);
+   }
+
+   to {
+    opacity: 1;
+    transform: translateY(0);
+   }
+  }
+
+  /* Адаптивность */
+  @media (max-width: 768px) {
+   body {
+    padding: 1rem;
+    padding-bottom: 80px;
+   }
+
+   .faq-container {
+    padding: 1.5rem;
+   }
+
+   .faq-title {
+    font-size: 2rem;
+   }
+
+   .accordion-header {
+    padding: 1.2rem;
+   }
+
+   .accordion-title {
+    font-size: 1.1rem;
+   }
+
+   .footer-nav {
+    padding: 0.5rem;
+   }
+
+   .nav-item {
+    padding: 0.5rem;
+   }
+
+   .nav-icon {
+    width: 20px;
+    height: 20px;
+   }
+
+   .nav-label {
+    font-size: 0.7rem;
+   }
+  }
+
+  @media (min-width: 768px) {
+   .nav-label {
+    display: block;
+   }
+  }
+ </style>
+</head>
+
+<body>
+ <div class="faq-container">
+  <h1 class="faq-title">FAQ по спортивному питанию</h1>
+
+  <div class="accordion">
+   <div class="accordion-item">
+    <button class="accordion-header" aria-expanded="false">
+     <span class="accordion-title">Что такое креатин?</span>
+     <span class="accordion-icon"></span>
+    </button>
+    <div class="accordion-content">
+     <div class="accordion-content-inner">
+      <p><b>Креатин</b> — органическое вещество, участвующее в энергообмене клеток (преимущественно мышц и мозга).</p>
+      <p><b>Синтезируется</b> в организме из аминокислот, также содержится в мясе и рыбе.</p>
+      <p><b>Функция:</b> превращается в фосфокреатин, который быстро восстанавливает АТФ — основной источник энергии для
+       кратковременных интенсивных нагрузок (спринт, силовые тренировки).</p>
+      <p><b>Применение:</b> популярная спортивная добавка (чаще в форме моногидрата) для повышения силы, выносливости и
+       роста мышц. Стандартная доза — 3–5 г/день.</p>
+      <p><b>Безопасен</b> при соблюдении дозировки, возможна легкая задержка воды. Особенно эффективен для спортсменов и
+       вегетарианцев.</p>
+      <p><b>Коротко:</b> «энергетическая батарейка» для мышц, усиливающая performance в тренировках. 💪🏋️♂️</p>
+     </div>
+    </div>
+   </div>
+
+   <div class="accordion-item">
+    <button class="accordion-header" aria-expanded="false">
+     <span class="accordion-title">Что такое протеин?</span>
+     <span class="accordion-icon"></span>
+    </button>
+    <div class="accordion-content">
+     <div class="accordion-content-inner">
+      <p><b>Протеин</b> — это белок, основной «строительный материал» для мышц, тканей, ферментов и гормонов.</p>
+      <p><b>Состав:</b> цепочки аминокислот, часть из которых организм не производит (незаменимые — получаем с пищей).
+      </p>
+      <p><b>Источники:</b> мясо, рыба, яйца, молочные продукты, бобовые, орехи. Добавки (порошки) — удобный способ
+       восполнить норму.</p>
+      <p><b>Функции:</b> рост/восстановление мышц, поддержка иммунитета, синтез коллагена, гормонов.</p>
+      <p><b>Норма:</b> 1.2–2 г на кг веса в день для активных людей. Спортсмены часто используют сывороточный,
+       казеиновый или растительный протеин.</p>
+      <p><b>Безопасность:</b> безвреден при умеренном потреблении. Избыток может нагружать почки (при патологиях).</p>
+     </div>
+    </div>
+   </div>
+
+   <div class="accordion-item">
+    <button class="accordion-header" aria-expanded="false">
+     <span class="accordion-title">Что такое BCAA?</span>
+     <span class="accordion-icon"></span>
+    </button>
+    <div class="accordion-content">
+     <div class="accordion-content-inner">
+      <p>BCAA (англ. Branched-Chain Amino Acids) — три незаменимые аминокислоты с разветвлённой цепью: <b> лейцин,
+        изолейцин и валин.</b></p>
+      <p><b>Функции:</b></p>
+      <p>— Служат «строительным материалом» для мышц.</p>
+      <p>— Снижают усталость во время тренировок.</p>
+      <p>— Препятствуют разрушению мышц (катаболизму).</p>
+      <p><b>Источники:</b> мясо, яйца, молочные продукты, добавки (порошки/капсулы).</p>
+      <p><b>Применение:</b> принимают до, во время или после тренировки для восстановления.</p>
+      <p><b>Безопасность:</b> безопасны в дозах 5–20 г/день. Избыток может нарушить усвоение других аминокислот.</p>
+      <p><b>Коротко:</b> «мышечный щит», помогающий сохранять энергию и массу при нагрузках. 💪🔥</p>
+     </div>
+    </div>
+   </div>
+
+   <div class="accordion-item">
+    <button class="accordion-header" aria-expanded="false">
+     <span class="accordion-title">Что такое гейнер?</span>
+     <span class="accordion-icon"></span>
+    </button>
+    <div class="accordion-content">
+     <div class="accordion-content-inner">
+      <p><b>Гейнер</b> — высококалорийная смесь углеводов и белков для набора мышечной массы и быстрого восполнения
+       энергии.</p>
+      <p><b>Состав:</b> 50–80% углеводов, 15–30% белка, иногда витамины, креатин, жиры.</p>
+      <p><b>Для кого:</b> худощавым людям (эктоморфам), спортсменам с интенсивными тренировками или при дефиците
+       калорий.</p>
+      <p><b>Когда принимать:</b> после тренировки или между приемами пищи для увеличения суточной калорийности.</p>
+      <p><b>Плюсы:</b> ускорение восстановления, рост мышц, удобство использования.</p>
+      <p><b>Минусы:</b> риск набора жира при избытке калорий или малоподвижном образе жизни.</p>
+      <p><b>Коротко:</b> «калорийный буст» для тех, кому сложно набирать массу. 🏋️♂️💥🍌</p>
+     </div>
+    </div>
+   </div>
+  </div>
+ </div>
+
+ <!-- Нижняя панель навигации -->
+ <div class="footer-nav">
+  <div class="nav-icons">
+   <!-- Иконка питания -->
+   <a href="index4.html" class="nav-item">
+    <i class="fas fa-utensils nav-icon"></i>
+    <span class="nav-label">Питание</span>
+   </a>
+
+   <!-- Иконка тренировок -->
+   <a href="index.html" class="nav-item">
+    <i class="fas fa-calendar-alt nav-icon"></i>
+    <span class="nav-label">Тренировки</span>
+   </a>
+
+   <!-- Иконка добавок (активная) -->
+   <a href="index2.html" class="nav-item active">
+    <i class="fas fa-question-circle nav-icon"></i>
+    <span class="nav-label">Вопросы</span>
+   </a>
+
+   <!-- Иконка добавок -->
+   <a href="index3.html" class="nav-item">
+    <i class="fas fa-pills nav-icon"></i>
+    <span class="nav-label">Добавки</span>
+   </a>
+  </div>
+ </div>
+
+ <!-- Кнопка "Наверх" -->
+ <button class="scroll-top">
+  <i class="fas fa-arrow-up"></i>
+ </button>
+
+ <script>
+  document.addEventListener('DOMContentLoaded', function () {
+   // Аккордеон
+   const accordionHeaders = document.querySelectorAll('.accordion-header');
+
+   accordionHeaders.forEach(header => {
+    header.addEventListener('click', function () {
+     const isExpanded = header.getAttribute('aria-expanded') === 'true';
+
+     // Закрываем все открытые элементы
+     if (!isExpanded) {
+      document.querySelectorAll('.accordion-header[aria-expanded="true"]').forEach(openHeader => {
+       openHeader.setAttribute('aria-expanded', 'false');
+       openHeader.nextElementSibling.style.maxHeight = '0';
+      });
+     }
+
+     // Переключаем текущий элемент
+     header.setAttribute('aria-expanded', !isExpanded);
+     const content = header.nextElementSibling;
+
+     if (!isExpanded) {
+      content.style.maxHeight = content.scrollHeight + 'px';
+     } else {
+      content.style.maxHeight = '0';
+     }
+    });
+   });
+
+   // Кнопка "Наверх"
+   const scrollTopBtn = document.querySelector('.scroll-top');
+
+   window.addEventListener('scroll', function () {
+    if (window.pageYOffset > 300) {
+     scrollTopBtn.classList.add('active');
+    } else {
+     scrollTopBtn.classList.remove('active');
+    }
+   });
+
+   scrollTopBtn.addEventListener('click', function () {
+    window.scrollTo({
+     top: 0,
+     behavior: 'smooth'
+    });
+   });
+
+   // Плавная прокрутка для всех ссылок
+   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+     e.preventDefault();
+
+     const targetId = this.getAttribute('href');
+     const targetElement = document.querySelector(targetId);
+
+     if (targetElement) {
+      targetElement.scrollIntoView({
+       behavior: 'smooth'
+      });
+     }
+    });
+   });
+  });
+ </script>
+</body>
+
+</html>
